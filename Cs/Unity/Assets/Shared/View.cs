@@ -27,7 +27,7 @@ namespace PerformanceTest
 
             obj.Shader = ((suv, ouv, obj, wp) =>
             {
-                Color result = new Color();
+                Color result = new Color(0,0,0,255);
 
                 float darkX = Math.Abs(suv.X - 0.5f + (float)Math.Cos(Shaders.Time() / 1000.0f) * 0.1f);
                 float darkY = Math.Abs(suv.Y - 0.5f + (float)Math.Cos(Shaders.Time() / 600.0f) * 0.1f);

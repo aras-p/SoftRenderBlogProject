@@ -179,7 +179,7 @@ namespace Softy
         }
     }
 
-    public class Color
+    public struct Color
     {
         public byte B { get; set; }
         public byte G { get; set; }

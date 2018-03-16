@@ -136,7 +136,7 @@ namespace Softy
         bool renderOdd = false;
         void RenderThread(int index, int strideCount, RenderObject obj)
         {
-            Color result = new Color();
+            Color result = new Color(0,0,0,255);
 
             int startHeight = Shaders.Clamp(obj.Y + strideCount * index, 0, Height);
             int endHeight = Shaders.Clamp(startHeight + strideCount, 0, Height);
