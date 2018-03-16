@@ -46,6 +46,7 @@ RenderScene g_Scene;
 bool g_Checkerboard = true;
 int g_RenderOdd = 0;
 float g_Time;
+uint32_t g_TimeInt;
 int g_ScreenWidth;
 int g_ScreenHeight;
 
@@ -82,6 +83,7 @@ void DrawObject(int screenWidth, int screenHeight, Color* backbuffer, RenderObje
 void DrawStuff(float time, int screenWidth, int screenHeight, Color* backbuffer)
 {
     g_Time = time * 1000.0f;
+    g_TimeInt = g_Time;
     g_ScreenWidth = screenWidth;
     g_ScreenHeight = screenHeight;
 
@@ -140,10 +142,28 @@ static void UpdateView(RenderObject* obj)
     obj->position.y = lerp(obj->position.y, g_ViewToPosition.y, 0.99f);
 }
 
-static uint8_t Dither(int strength, float salt)
+static uint32_t IntHash(uint32_t a)
 {
-    return (uint8_t)((int(3.1415 * salt * clock()) % (strength * 2 + 1)) - strength);
+    a = (a + 0x7ed55d16) + (a << 12);
+    a = (a ^ 0xc761c23c) ^ (a >> 19);
+    a = (a + 0x165667b1) + (a << 5);
+    a = (a + 0xd3a2646c) ^ (a << 9);
+    a = (a + 0xfd7046c5) + (a << 3);
+    a = (a ^ 0xb55a4f09) ^ (a >> 16);
+    return a;
 }
+
+static Color Dither(Color col, Vector2 uv)
+{
+    uint32_t hash = IntHash((uint32_t)(uv.x * 703.f + uv.y * 97787)) + g_TimeInt * 17;
+    uint32_t dither = 32;
+    uint8_t v = (uint8_t)(hash & (dither - 1));
+    if (col.r < 255 - dither) col.r += v;
+    if (col.g < 255 - dither) col.g += v;
+    if (col.b < 255 - dither) col.b += v;
+    return col;
+}
+
 
 static Color PixelProgramView(Vector2 suv, Vector2 ouv, RenderObject* obj)
 {
@@ -163,14 +183,7 @@ static Color PixelProgramView(Vector2 suv, Vector2 ouv, RenderObject* obj)
     result.g = (uint8_t)(result.g * dark);
     result.r = (uint8_t)(result.r * dark);
 
-    const int dither = 32;
-    int ditherB = std::min(dither, std::min<int>(result.b, 255 - result.b));
-    int ditherG = std::min(dither, std::min<int>(result.g, 255 - result.g));
-    int ditherR = std::min(dither, std::min<int>(result.r, 255 - result.r));
-
-    result.b += Dither(ditherB, suv.x);
-    result.g += Dither(ditherG, suv.x);
-    result.r += Dither(ditherR, suv.x);
+    result = Dither(result, suv);
 
     return result;
 
