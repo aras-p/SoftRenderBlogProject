@@ -121,60 +121,12 @@ namespace Softy
         }
     }
 
-    public class Matrix
-    {
-        public float[][] Data;
-
-        public int Length => Data.Length;
-
-        public float[] this[int i]
-        {
-            get
-            {
-                return Data[i];
-            }
-
-            set
-            {
-                Data[i] = value;
-            }
-        }
-
-        public Matrix(int size)
-        {
-            Data = new float[size][];
-
-            for (int i = 0; i < size; i++)
-            {
-                Data[i] = new float[size];
-            }
-        }
-
-        public static Matrix operator *(Matrix m1, Matrix m2)
-        {
-            Matrix result = new Matrix(m1.Length);
-
-            for (int row = 0; row < result.Data.Length; row++)
-            {
-                for (int col = 0; col < result[row].Length; col++)
-                {
-                    for (int i = 0; i < result.Data.Length; i++)
-                    {
-                        result[row][col] += m1[row][i] * m2[i][col];
-                    }
-                }
-            }
-
-            return result;
-        }
-    }
-
     public struct Color
     {
-        public byte B { get; set; }
-        public byte G { get; set; }
-        public byte R { get; set; }
-        public byte A { get; set; }
+        public byte B;
+        public byte G;
+        public byte R;
+        public byte A;
 
         public Color(byte r = 0, byte g = 0, byte b = 0, byte a = 255)
         {
@@ -210,9 +162,6 @@ namespace Softy
     {
         Device device;
 
-        //public List<Vector> Vectors = new List<Vector>();
-        public List<Matrix> Matrixes = new List<Matrix>();
-        public List<Color> Colors = new List<Color>();
         public List<Texture> Textures = new List<Texture>();
 
         public PixelProgram Shader { get; set; }
@@ -245,11 +194,11 @@ namespace Softy
             this.device = device;
         }
 
-        public Color Sample(Vector2 screenUV, Vector2 objUV, Color workingPixel)
+        public Color Sample(Vector2 screenUV, Vector2 objUV)
         {
             if (Shader != null)
             {
-                return Shader(screenUV, objUV, this, workingPixel);
+                return Shader(screenUV, objUV, this);
             }
             else return Color.DefaultColor;
         }

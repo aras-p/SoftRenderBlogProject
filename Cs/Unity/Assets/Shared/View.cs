@@ -1,10 +1,6 @@
 ﻿using Softy;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PerformanceTest
 {
@@ -26,7 +22,7 @@ namespace PerformanceTest
             obj = new RenderObject(device);
             obj.Textures.Add(view);
 
-            obj.Shader = ((suv, ouv, obj, wp) =>
+            obj.Shader = ((suv, ouv, obj) =>
             {
                 Color result = new Color(0, 0, 0, 255);
 

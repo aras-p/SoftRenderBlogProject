@@ -10,14 +10,9 @@ namespace Softy
             timer.Start();
         }
 
-        public delegate Color PixelProgram(Vector2 screenUV, Vector2 objUV, RenderObject obj, Color workingPixel);
+        public delegate Color PixelProgram(Vector2 screenUV, Vector2 objUV, RenderObject obj);
 
-        public static PixelProgram Colored = (suv, ouv, obj, wp) =>
-        {
-            return obj.Colors[0];
-        };
-
-        public static PixelProgram Textured = (suv, ouv, obj, wp) =>
+        public static PixelProgram Textured = (suv, ouv, obj) =>
         {
             return SampleTexture(obj.Textures[0], ouv);
         };

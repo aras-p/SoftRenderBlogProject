@@ -21,9 +21,8 @@ namespace PerformanceTest
 
             obj = new RenderObject(device);
             obj.Textures.Add(scope);
-            //obj.Vectors.Add(new Vector2(Position.X, Position.Y));
 
-            obj.Shader = ((suv, ouv, obj, wp) =>
+            obj.Shader = ((suv, ouv, obj) =>
             {
                 Color result = Shaders.SampleTexture(obj.Textures[0], ouv);
 
