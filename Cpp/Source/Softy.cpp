@@ -210,14 +210,17 @@ static void PixelProgramView(
     int cols, float screenUVdx, float objUVdx, Color* backbuffer)
 {
     const Color* textureY = SampleTextureY(g_TextureView, objUV);
+    float darkXfac = -0.5f + g_CosTime1000 * 0.1f;
+    float darkY = fabs(screenUV.y - 0.5f + g_CosTime600 * 0.1f);
+    float darkY2 = darkY * darkY;
+
     for (int x = 0; x < cols; ++x, screenUV.x += screenUVdx, objUV.x += objUVdx, backbuffer++)
     {
         objUV.x = clamp(objUV.x, 0.f, 1.f);
         Color result = Color(0, 0, 0, 255);
 
-        float darkX = fabs(screenUV.x - 0.5f + g_CosTime1000 * 0.1f);
-        float darkY = fabs(screenUV.y - 0.5f + g_CosTime600 * 0.1f);
-        float dark = clamp(1.f - 4.f * (darkX * darkX + darkY * darkY), 0.f, 1.f);
+        float darkX = fabs(screenUV.x + darkXfac );
+        float dark = clamp(1.f - 4.f * (darkX * darkX + darkY2), 0.f, 1.f);
         if (dark != 0.f)
         {
             result = SampleTextureX(g_TextureView, textureY, objUV);
