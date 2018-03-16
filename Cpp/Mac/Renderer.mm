@@ -164,7 +164,7 @@ static Texture* LoadTexture(const char* path)
     uint64_t time2 = mach_absolute_time();
     ++frameCounter;
     frameTime += (time2-time1);
-    if (frameCounter > 10)
+    if (frameCounter > 50)
     {
         uint64_t ns = (frameTime * _clock_timebase.numer) / _clock_timebase.denom;
         float s = (float)(ns * 1.0e-9) / frameCounter;

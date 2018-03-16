@@ -3,6 +3,7 @@
 #include <math.h>
 #include <time.h>
 #include <algorithm>
+#include "enkiTS/TaskScheduler_c.h"
 
 template<typename T> T clamp(T x, T min, T max)
 {
@@ -43,19 +44,24 @@ struct RenderObject
 typedef std::vector<RenderObject> RenderScene;
 RenderScene g_Scene;
 
-bool g_Checkerboard = true;
-int g_RenderOdd = 0;
-float g_Time;
-uint32_t g_TimeInt;
-int g_ScreenWidth;
-int g_ScreenHeight;
+static bool g_Checkerboard = true;
+static int g_RenderOdd = 0;
+static float g_Time;
+static uint32_t g_TimeInt;
+static float g_CosTime1000;
+static float g_CosTime600;
+static int g_ScreenWidth;
+static int g_ScreenHeight;
 
-void DrawObject(int screenWidth, int screenHeight, Color* backbuffer, RenderObject* obj)
+static enkiTaskScheduler* g_TS;
+
+
+void DrawObject(int screenWidth, int screenHeight, int rowStartY, int rowEndY, Color* backbuffer, RenderObject* obj)
 {
     int startX = clamp(int(obj->position.x * screenWidth), 0, screenWidth - 1);
     int endX = clamp(int((obj->position.x + obj->size.x) * screenWidth), 0, screenWidth - 1);
-    int startY = clamp(int(obj->position.y * screenHeight), 0, screenHeight - 1);
-    int endY = clamp(int((obj->position.y + obj->size.y) * screenHeight), 0, screenHeight - 1);
+    int startY = clamp(int(obj->position.y * screenHeight), rowStartY, rowEndY);
+    int endY = clamp(int((obj->position.y + obj->size.y) * screenHeight), rowStartY, rowEndY);
 
     float invWidth = 1.f / screenWidth;
     float invHeight = 1.f / screenHeight;
@@ -80,10 +86,27 @@ void DrawObject(int screenWidth, int screenHeight, Color* backbuffer, RenderObje
     }
 }
 
+struct DrawObjectArgs
+{
+    int screenWidth, screenHeight;
+    Color* backbuffer;
+    RenderObject* obj;
+};
+
+static void DrawObjectJob(uint32_t start, uint32_t end, uint32_t threadnum, void* args_)
+{
+    DrawObjectArgs* args = (DrawObjectArgs*)args_;
+    DrawObject(args->screenWidth, args->screenHeight, start, end, args->backbuffer, args->obj);
+}
+
+
 void DrawStuff(float time, int screenWidth, int screenHeight, Color* backbuffer)
 {
     g_Time = time * 1000.0f;
-    g_TimeInt = g_Time;
+    g_TimeInt = (uint32_t)g_Time;
+    g_CosTime1000 = cosf(g_Time / 1000.0f);
+    g_CosTime600 = cosf(g_Time / 600.0f);
+
     g_ScreenWidth = screenWidth;
     g_ScreenHeight = screenHeight;
 
@@ -91,7 +114,17 @@ void DrawStuff(float time, int screenWidth, int screenHeight, Color* backbuffer)
         o.tick(&o);
 
     for (auto& o : g_Scene)
-        DrawObject(screenWidth, screenHeight, backbuffer, &o);
+    {
+        DrawObjectArgs args;
+        args.screenWidth = screenWidth;
+        args.screenHeight = screenHeight;
+        args.backbuffer = backbuffer;
+        args.obj = &o;
+        enkiTaskSet * task = enkiCreateTaskSet(g_TS, DrawObjectJob);
+        enkiAddTaskSetToPipeMinRange(g_TS, task, &args, screenHeight, 32);
+        enkiWaitForTaskSet(g_TS, task);
+        enkiDeleteTaskSet(task);
+    }
 
     g_RenderOdd = 1 - g_RenderOdd;
 }
@@ -109,8 +142,8 @@ static void UpdateScope(RenderObject* obj)
 {
     obj->size.x = 0.8f * float(g_ScreenHeight) / float(g_ScreenWidth);
     obj->size.y = 0.8f;
-    obj->position.x = 0.5f - obj->size.x / 2 + cosf(g_Time / 1000.0f) * 0.05f;
-    obj->position.y = 0.5f - obj->size.y / 2 + cosf(g_Time / 600.0f) * 0.05f;
+    obj->position.x = 0.5f - obj->size.x / 2 + g_CosTime1000 * 0.05f;
+    obj->position.y = 0.5f - obj->size.y / 2 + g_CosTime600 * 0.05f;
 }
 
 static Texture* g_TextureScope;
@@ -118,7 +151,6 @@ static Texture* g_TextureScope;
 static Color PixelProgramScope(Vector2 screenUV, Vector2 objUV, RenderObject* obj)
 {
     return SampleTexture(g_TextureScope, objUV);
-    //return Color(screenUV.x*255, screenUV.y*255, 0, 255);
 }
 
 static Texture* g_TextureView;
@@ -169,8 +201,8 @@ static Color PixelProgramView(Vector2 suv, Vector2 ouv, RenderObject* obj)
 {
     Color result = Color(0, 0, 0, 255);
 
-    float darkX = fabs(suv.x - 0.5f + cosf(g_Time / 1000.0f) * 0.1f);
-    float darkY = fabs(suv.y - 0.5f + cosf(g_Time / 600.0f) * 0.1f);
+    float darkX = fabs(suv.x - 0.5f + g_CosTime1000 * 0.1f);
+    float darkY = fabs(suv.y - 0.5f + g_CosTime600 * 0.1f);
     float dark = clamp(1.f - 4.f * (darkX * darkX + darkY * darkY), 0.f, 1.f);
     if (dark == 0)
     {
@@ -192,6 +224,9 @@ static Color PixelProgramView(Vector2 suv, Vector2 ouv, RenderObject* obj)
 
 void InitializeStuff(Texture* texScope, Texture* texView)
 {
+    g_TS = enkiNewTaskScheduler();
+    enkiInitTaskScheduler(g_TS);
+
     g_TextureView = texView;
     RenderObject view = RenderObject{ Vector2(), Vector2(), &PixelProgramView, &UpdateView };
     g_Scene.push_back(view);
@@ -203,5 +238,6 @@ void InitializeStuff(Texture* texScope, Texture* texView)
 
 void ShutdownStuff()
 {
+    enkiDeleteTaskScheduler(g_TS);
 }
 

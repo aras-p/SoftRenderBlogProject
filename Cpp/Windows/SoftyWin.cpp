@@ -158,13 +158,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             uint64_t dt = time2.QuadPart - time1.QuadPart;
             ++s_Count;
             s_Time += dt;
-            if (s_Count > 10)
+            if (s_Count > 50)
             {
                 LARGE_INTEGER frequency;
                 QueryPerformanceFrequency(&frequency);
 
                 double s = double(s_Time) / double(frequency.QuadPart) / s_Count;
-                sprintf_s(s_Buffer, sizeof(s_Buffer), "ms: %.1f FPS %.1f\n", s * 1000.0f, 1.f / s);
+                sprintf_s(s_Buffer, sizeof(s_Buffer), "ms: %.2f FPS %.1f\n", s * 1000.0f, 1.f / s);
                 s_Count = 0;
                 s_Time = 0;
             }
