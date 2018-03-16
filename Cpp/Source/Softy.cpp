@@ -42,7 +42,7 @@ struct RenderObject
 };
 
 typedef std::vector<RenderObject> RenderScene;
-RenderScene g_Scene;
+static RenderScene g_Scene;
 
 static bool g_Checkerboard = true;
 static int g_RenderOdd = 0;
@@ -56,7 +56,7 @@ static int g_ScreenHeight;
 static enkiTaskScheduler* g_TS;
 
 
-void DrawObject(int screenWidth, int screenHeight, int rowStartY, int rowEndY, Color* backbuffer, RenderObject* obj)
+static void DrawObject(int screenWidth, int screenHeight, int rowStartY, int rowEndY, Color* backbuffer, RenderObject* obj)
 {
     int startX = clamp(int(obj->position.x * screenWidth), 0, screenWidth - 1);
     int endX = clamp(int((obj->position.x + obj->size.x) * screenWidth), 0, screenWidth - 1);
@@ -65,21 +65,24 @@ void DrawObject(int screenWidth, int screenHeight, int rowStartY, int rowEndY, C
 
     float invWidth = 1.f / screenWidth;
     float invHeight = 1.f / screenHeight;
+    Vector2 objPos = obj->position;
     Vector2 objInvSize = Vector2(1.f / obj->size.x, 1.f / obj->size.y);
+    Vector2 objPosTimesInvSize = objPos * objInvSize;
     for (auto y = startY; y < endY; ++y)
     {
-        for (auto x = startX; x < endX; ++x)
+        int yOffset = y * screenWidth;
+        Vector2 screenUV = Vector2(startX * invWidth, y * invHeight);
+        for (int x = startX; x < endX; ++x, screenUV.x += invWidth)
         {
             if ((g_Checkerboard && (((x + y) & 1) == g_RenderOdd)) || !g_Checkerboard)
             {
-                Vector2 screenUV = Vector2(x * invWidth, y * invHeight);
-                Vector2 objUV = (screenUV - obj->position) * objInvSize;
+                Vector2 objUV = screenUV * objInvSize - objPosTimesInvSize;
                 objUV = clamp(objUV, 0.f, 1.f);
 
                 Color result = obj->shader(screenUV, objUV, obj);
                 if (result.a > 0)
                 {
-                    backbuffer[y * screenWidth + x] = result;
+                    backbuffer[yOffset + x] = result;
                 }
             }
         }
@@ -204,7 +207,7 @@ static Color PixelProgramView(Vector2 suv, Vector2 ouv, RenderObject* obj)
     float darkX = fabs(suv.x - 0.5f + g_CosTime1000 * 0.1f);
     float darkY = fabs(suv.y - 0.5f + g_CosTime600 * 0.1f);
     float dark = clamp(1.f - 4.f * (darkX * darkX + darkY * darkY), 0.f, 1.f);
-    if (dark == 0)
+    if (dark == 0.f)
     {
         return result;
     }
