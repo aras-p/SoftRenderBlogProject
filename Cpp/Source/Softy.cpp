@@ -213,6 +213,7 @@ static void PixelProgramView(
     float darkXfac = -0.5f + g_CosTime1000 * 0.1f;
     float darkY = fabs(screenUV.y - 0.5f + g_CosTime600 * 0.1f);
     float darkY2 = darkY * darkY;
+    float darkFac = 1.0f - 4.0f * darkY2;
 
     for (int x = 0; x < cols; ++x, screenUV.x += screenUVdx, objUV.x += objUVdx, backbuffer++)
     {
@@ -220,8 +221,8 @@ static void PixelProgramView(
         Color result = Color(0, 0, 0, 255);
 
         float darkX = fabs(screenUV.x + darkXfac );
-        float dark = clamp(1.f - 4.f * (darkX * darkX + darkY2), 0.f, 1.f);
-        if (dark != 0.f)
+        float dark = darkFac - 4.f * darkX * darkX;
+        if (dark > 0.0f)
         {
             result = SampleTextureX(g_TextureView, textureY, objUV);
 
