@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <BaseDirectory>..</BaseDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+    <StartAction>Project</StartAction>
+    <StartWorkingDirectory>..</StartWorkingDirectory>
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="StbSharp" Version="0.6.8.33" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Unity\Assets\Shared\Device.cs">
+      <Link>Device.cs</Link>
+    </Compile>
+    <Compile Include="..\Unity\Assets\Shared\Scope.cs">
+      <Link>Scope.cs</Link>
+    </Compile>
+    <Compile Include="..\Unity\Assets\Shared\Shaders.cs">
+      <Link>Shaders.cs</Link>
+    </Compile>
+    <Compile Include="..\Unity\Assets\Shared\Types.cs">
+      <Link>Types.cs</Link>
+    </Compile>
+    <Compile Include="..\Unity\Assets\Shared\View.cs">
+      <Link>View.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

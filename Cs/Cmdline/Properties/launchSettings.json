@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SoftRenCsCmdline": {
+      "commandName": "Project",
+      "workingDirectory": ".."
+    }
+  }
+}
