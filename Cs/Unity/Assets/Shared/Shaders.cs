@@ -61,14 +61,17 @@ namespace Softy
             CosTime600 = (float)Math.Cos(Time / 600.0f);
         }
 
-        public static Color SampleTexture(Texture texture, Vector2 objUV)
+        public static int SampleTextureY(Texture texture, Vector2 objUV)
+        {
+            int coordY = (int)((texture.Height - 1) * objUV.y);
+            return coordY * texture.Stride;
+        }
+
+        public static Color SampleTextureX(Texture texture, int rowOffset, Vector2 objUV)
         {
             int coordX = (int)((texture.Width - 1) * objUV.x);
-            int coordY = (int)((texture.Height - 1) * objUV.y);
-            int height = coordY * texture.Stride;
             int width = coordX * 4;
-
-            int offs = height + width;
+            int offs = rowOffset + width;
             var data = texture.Data;
             return new Color(
                 data[offs],

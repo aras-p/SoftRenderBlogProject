@@ -24,9 +24,10 @@ namespace PerformanceTest
 
             obj.Shader = ((suv, ouv, obj, cols, screenUVdx, objUVdx, backbuffer, backbufferOffset) =>
             {
+                int texY = Shaders.SampleTextureY(obj.Textures[0], ouv);
                 for (int x = 0; x < cols; ++x, suv.x += screenUVdx, ouv.x += objUVdx, backbufferOffset += 4)
                 {
-                    Color result = Shaders.SampleTexture(obj.Textures[0], ouv);
+                    Color result = Shaders.SampleTextureX(obj.Textures[0], texY, ouv);
                     if (result.A > 0)
                     {
                         backbuffer[backbufferOffset] = result.B;

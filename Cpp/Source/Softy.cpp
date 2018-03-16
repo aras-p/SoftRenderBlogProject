@@ -124,12 +124,17 @@ void DrawStuff(float time, int screenWidth, int screenHeight, Color* backbuffer)
     g_RenderOdd = 1 - g_RenderOdd;
 }
 
-static Color SampleTexture(const Texture* texture, Vector2 objUV)
+static const Color* SampleTextureY(const Texture* texture, Vector2 objUV)
+{
+    int coordY = (int)(texture->Height1() * objUV.y);
+    int index = coordY * texture->Width();
+    return texture->Data() + index;
+}
+
+static Color SampleTextureX(const Texture* texture, const Color* textureY, Vector2 objUV)
 {
     int coordX = (int)((texture->Width() - 1) * objUV.x);
-    int coordY = (int)((texture->Height() - 1) * objUV.y);
-    int index = coordY * texture->Width() + coordX;
-    return texture->Data()[index];
+    return textureY[coordX];
 }
 
 
@@ -146,12 +151,12 @@ static Texture* g_TextureScope;
 static void PixelProgramScope(
     Vector2 screenUV, Vector2 objUV, RenderObject* obj,
     int cols, float screenUVdx, float objUVdx, Color* backbuffer)
-
 {
+    const Color* texY = SampleTextureY(g_TextureScope, objUV);
     for (int x = 0; x < cols; ++x, screenUV.x += screenUVdx, objUV.x += objUVdx, backbuffer++)
     {
         objUV.x = clamp(objUV.x, 0.f, 1.f);
-        Color result = SampleTexture(g_TextureScope, objUV);
+        Color result = SampleTextureX(g_TextureScope, texY, objUV);
         if (result.a > 0)
             *backbuffer = result;
     }
@@ -204,6 +209,7 @@ static void PixelProgramView(
     Vector2 screenUV, Vector2 objUV, RenderObject* obj,
     int cols, float screenUVdx, float objUVdx, Color* backbuffer)
 {
+    const Color* textureY = SampleTextureY(g_TextureView, objUV);
     for (int x = 0; x < cols; ++x, screenUV.x += screenUVdx, objUV.x += objUVdx, backbuffer++)
     {
         objUV.x = clamp(objUV.x, 0.f, 1.f);
@@ -214,7 +220,7 @@ static void PixelProgramView(
         float dark = clamp(1.f - 4.f * (darkX * darkX + darkY * darkY), 0.f, 1.f);
         if (dark != 0.f)
         {
-            result = SampleTexture(g_TextureView, objUV);
+            result = SampleTextureX(g_TextureView, textureY, objUV);
 
             result.b = (uint8_t)(result.b * dark);
             result.g = (uint8_t)(result.g * dark);

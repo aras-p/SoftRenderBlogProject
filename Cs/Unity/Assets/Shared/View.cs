@@ -24,6 +24,7 @@ namespace PerformanceTest
 
             obj.Shader = ((suv, ouv, obj, cols, screenUVdx, objUVdx, backbuffer, backbufferOffset) =>
             {
+                int texY = Shaders.SampleTextureY(obj.Textures[0], ouv);
                 for (int x = 0; x < cols; ++x, suv.x += screenUVdx, ouv.x += objUVdx, backbufferOffset += 4)
                 {
                     Color result = new Color(0, 0, 0, 255);
@@ -33,7 +34,7 @@ namespace PerformanceTest
                     float dark = Shaders.Clamp(1 - 4f * (darkX * darkX + darkY * darkY), 0, 1);
                     if (dark != 0)
                     {
-                        result = Shaders.SampleTexture(obj.Textures[0], ouv);
+                        result = Shaders.SampleTextureX(obj.Textures[0], texY, ouv);
 
                         result.B = (byte)(result.B * dark);
                         result.G = (byte)(result.G * dark);

@@ -158,7 +158,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             uint64_t dt = time2.QuadPart - time1.QuadPart;
             ++s_Count;
             s_Time += dt;
-            if (s_Count > 100)
+            if (s_Count > 200)
             {
                 LARGE_INTEGER frequency;
                 QueryPerformanceFrequency(&frequency);
