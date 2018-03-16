@@ -134,8 +134,8 @@ void DrawStuff(float time, int screenWidth, int screenHeight, Color* backbuffer)
 
 static Color SampleTexture(const Texture* texture, Vector2 objUV)
 {
-    int coordX = (int)lroundf((texture->Width() - 1) * objUV.x);
-    int coordY = (int)lroundf((texture->Height() - 1) * objUV.y);
+    int coordX = (int)((texture->Width() - 1) * objUV.x);
+    int coordY = (int)((texture->Height() - 1) * objUV.y);
     int index = coordY * texture->Width() + coordX;
     return texture->Data()[index];
 }
