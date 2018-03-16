@@ -27,9 +27,13 @@ namespace Softy
         public static Stopwatch timer = new Stopwatch();
         private static int _time = 0;
 
-        public static T Clamp<T>(T value, T min, T max) where T : IComparable
+        public static float Clamp(float value, float min, float max)
         {
-            return value.CompareTo(min) < 0 ? min : value.CompareTo(max) > 0 ? max : value;
+            return value < min ? min : value > max ? max : value;
+        }
+        public static int Clamp(int value, int min, int max)
+        {
+            return value < min ? min : value > max ? max : value;
         }
 
         static private uint IntHash(uint a)
