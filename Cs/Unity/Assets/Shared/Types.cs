@@ -141,13 +141,13 @@ namespace Softy
 
     public class Texture
     {
-        public int Height { get; }
-        public int Stride { get; }
-        public int Width { get; }
+        public int Height;
+        public int Stride;
+        public int Width;
 
         public int PixelCount => Width * Height;
 
-        public byte[] Data { get; }
+        public byte[] Data;
 
         public Texture(byte[] data, int stride)
         {
@@ -164,7 +164,7 @@ namespace Softy
 
         public List<Texture> Textures = new List<Texture>();
 
-        public PixelProgram Shader { get; set; }
+        public PixelProgram Shader;
         public Vector2 Position = new Vector2(0, 0);
         public Vector2 Size = new Vector2(1, 1);
 
@@ -196,11 +196,7 @@ namespace Softy
 
         public Color Sample(Vector2 screenUV, Vector2 objUV)
         {
-            if (Shader != null)
-            {
-                return Shader(screenUV, objUV, this);
-            }
-            else return Color.DefaultColor;
+            return Shader(screenUV, objUV, this);
         }
 
         public void Draw()

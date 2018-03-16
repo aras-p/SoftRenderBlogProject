@@ -20,9 +20,9 @@ namespace Softy
         // Intrisic functions
         static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
-        private static float _time = 0;
-        private static float _cosTime1000;
-        private static float _cosTime600;
+        public static float Time = 0;
+        public static float CosTime1000;
+        public static float CosTime600;
 
         public static float Clamp(float value, float min, float max)
         {
@@ -46,8 +46,8 @@ namespace Softy
 
         public static Color Dither(Color col, Vector2 uv)
         {
-            uint hash = IntHash((uint)(uv.x * 70003f + uv.y * 97787f + _time * 17f));
             uint dither = 32;
+            uint hash = IntHash((uint)(uv.x * 70003f + uv.y * 97787f + Time * 17f));
             byte v = (byte)(hash & (dither - 1));
             if (col.R < 255 - dither) col.R += v;
             if (col.G < 255 - dither) col.G += v;
@@ -60,24 +60,11 @@ namespace Softy
             return v1 * ratio + v2 * (1 - ratio);
         }
 
-        public static float Time()
-        {
-            return _time;
-        }
-        public static float CosTime1000()
-        {
-            return _cosTime1000;
-        }
-        public static float CosTime600()
-        {
-            return _cosTime600;
-        }
-
         public static void TimeUpdate()
         {
-            _time = (float)timer.ElapsedMilliseconds;
-            _cosTime1000 = (float)Math.Cos(_time / 1000.0f);
-            _cosTime600 = (float)Math.Cos(_time / 600.0f);
+            Time = (float)timer.ElapsedMilliseconds;
+            CosTime1000 = (float)Math.Cos(Time / 1000.0f);
+            CosTime600 = (float)Math.Cos(Time / 600.0f);
         }
 
         public static Color SampleTexture(Texture texture, Vector2 objUV)
@@ -88,11 +75,12 @@ namespace Softy
             int width = coordX * 4;
 
             int offs = height + width;
+            var data = texture.Data;
             return new Color(
-                texture.Data[offs],
-                texture.Data[offs + 1],
-                texture.Data[offs + 2],
-                texture.Data[offs + 3]);
+                data[offs],
+                data[offs + 1],
+                data[offs + 2],
+                data[offs + 3]);
         }
     }
 }

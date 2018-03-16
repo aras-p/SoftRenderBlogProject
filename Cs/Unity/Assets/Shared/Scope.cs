@@ -35,8 +35,8 @@ namespace PerformanceTest
             obj.Size.x = Size.x * ((float)device.Height / device.Width);
             obj.Size.y = Size.y;
 
-            obj.Position.x = Position.x - obj.Size.x / 2 + (float)Math.Cos(Shaders.Time() / 1000.0f) * 0.05f;
-            obj.Position.y = Position.y - obj.Size.y / 2 + (float)Math.Cos(Shaders.Time() / 600.0f) * 0.05f;
+            obj.Position.x = Position.x - obj.Size.x / 2 + (float)Math.Cos(Shaders.Time / 1000.0f) * 0.05f;
+            obj.Position.y = Position.y - obj.Size.y / 2 + (float)Math.Cos(Shaders.Time / 600.0f) * 0.05f;
         }
 
         public void Draw()

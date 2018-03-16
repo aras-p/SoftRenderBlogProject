@@ -26,8 +26,8 @@ namespace PerformanceTest
             {
                 Color result = new Color(0, 0, 0, 255);
 
-                float darkX = Math.Abs(suv.x - 0.5f + Shaders.CosTime1000() * 0.1f);
-                float darkY = Math.Abs(suv.y - 0.5f + Shaders.CosTime600() * 0.1f);
+                float darkX = Math.Abs(suv.x - 0.5f + Shaders.CosTime1000 * 0.1f);
+                float darkY = Math.Abs(suv.y - 0.5f + Shaders.CosTime600 * 0.1f);
                 float dark = Shaders.Clamp(1 - 4f * (darkX * darkX + darkY * darkY), 0, 1);
                 if (dark == 0)
                 {

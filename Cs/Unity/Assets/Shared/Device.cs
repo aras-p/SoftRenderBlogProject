@@ -122,14 +122,14 @@ namespace Softy
             int startPixel = pixelCount * index;
             int endPixel = index + 1 >= ThreadCount ? BackBuffer.Length / 4 : pixelCount * (index + 1);
 
-            for (int i = startPixel; i < endPixel; i++)
+            int startOffset = startPixel * 4;
+            int endOffset = endPixel * 4;
+            for (int i = startOffset; i < endOffset; i += 4)
             {
-                int offset = i * 4;
-
-                BackBuffer[offset] = color.B;
-                BackBuffer[offset + 1] = color.G;
-                BackBuffer[offset + 2] = color.R;
-                BackBuffer[offset + 3] = 255;
+                BackBuffer[i] = color.B;
+                BackBuffer[i + 1] = color.G;
+                BackBuffer[i + 2] = color.R;
+                BackBuffer[i + 3] = 255;
             }
         }
 
@@ -148,12 +148,14 @@ namespace Softy
             float invHeight = 1f / Height;
             Vector2 invObjSize = new Vector2(1, 1) / obj.Size;
             int yOffset = startHeight * Stride;
+            var checkerboard = Checkerboard;
+            var backbuffer = BackBuffer;
             for (int y = startHeight; y < endHeight; y++)
             {
                 int offset = yOffset + startWidth * 4;
                 for (int x = startWidth; x < endWidth; x++)
                 {
-                    if (Checkerboard && ((x + y) & 1) == renderOdd || !Checkerboard)
+                    if (checkerboard && ((x + y) & 1) == renderOdd || !checkerboard)
                     {
                         Vector2 screenUV = new Vector2((float)x * invWidth, (float)y * invHeight);
                         Vector2 objUV = (screenUV - obj.Position) * invObjSize;
@@ -163,9 +165,9 @@ namespace Softy
 
                         if (result.A > 0)
                         {
-                            BackBuffer[offset] = result.B;
-                            BackBuffer[offset + 1] = result.G;
-                            BackBuffer[offset + 2] = result.R;
+                            backbuffer[offset] = result.B;
+                            backbuffer[offset + 1] = result.G;
+                            backbuffer[offset + 2] = result.R;
                         }
                     }
                     offset += 4;
