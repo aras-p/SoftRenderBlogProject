@@ -162,8 +162,6 @@ namespace Softy
     {
         Device device;
 
-        public List<Texture> Textures = new List<Texture>();
-
         public PixelProgram Shader;
         public Vector2 Position = new Vector2(0, 0);
         public Vector2 Size = new Vector2(1, 1);

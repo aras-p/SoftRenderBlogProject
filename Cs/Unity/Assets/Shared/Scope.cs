@@ -1,9 +1,5 @@
 ﻿using Softy;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PerformanceTest
 {
@@ -11,23 +7,24 @@ namespace PerformanceTest
     {
         Device device;
         RenderObject obj;
+        Texture texture;
 
         static readonly Vector2 Size = new Vector2(0.8f, 0.8f);
         static readonly Vector2 Position = new Vector2(0.5f, 0.5f);
 
         public Scope(Device device, Texture scope)
         {
+            texture = scope;
             this.device = device;
 
             obj = new RenderObject(device);
-            obj.Textures.Add(scope);
 
-            obj.Shader = ((suv, ouv, obj, cols, screenUVdx, objUVdx, backbuffer, backbufferOffset) =>
+            obj.Shader = ((suv, ouv, cols, screenUVdx, objUVdx, backbuffer, backbufferOffset) =>
             {
-                int texY = Shaders.SampleTextureY(obj.Textures[0], ouv);
+                int texY = Shaders.SampleTextureY(texture, ouv);
                 for (int x = 0; x < cols; ++x, suv.x += screenUVdx, ouv.x += objUVdx, backbufferOffset += 4)
                 {
-                    Color result = Shaders.SampleTextureX(obj.Textures[0], texY, ouv);
+                    Color result = Shaders.SampleTextureX(texture, texY, ouv);
                     if (result.A > 0)
                     {
                         backbuffer[backbufferOffset] = result.B;

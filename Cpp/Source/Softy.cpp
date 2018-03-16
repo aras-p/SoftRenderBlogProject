@@ -30,7 +30,7 @@ inline Vector2 clamp(Vector2 a, float min, float max) { return Vector2(clamp(a.x
 
 struct RenderObject;
 
-typedef void PixelProgramSpan(Vector2 screenUV, Vector2 objUV, RenderObject* obj, int cols, float screenUVdx, float objUVdx, Color* backbuffer);
+typedef void PixelProgramSpan(Vector2 screenUV, Vector2 objUV, int cols, float screenUVdx, float objUVdx, Color* backbuffer);
 typedef void UpdateFunc(RenderObject* obj);
 
 struct RenderObject
@@ -77,7 +77,7 @@ static void DrawObject(int screenWidth, int screenHeight, int rowStartY, int row
         Vector2 screenUV = Vector2(startX * invWidth, y * invHeight);
         Vector2 objUV = screenUV * objInvSize - objPosTimesInvSize;
         objUV.y = clamp(objUV.y, 0.f, 1.f);
-        obj->shader(screenUV, objUV, obj, endX - startX, invWidth, invWidth*objInvSize.x, backbuffer + yOffset + startX);
+        obj->shader(screenUV, objUV, endX - startX, invWidth, invWidth*objInvSize.x, backbuffer + yOffset + startX);
     }
 }
 
@@ -149,7 +149,7 @@ static void UpdateScope(RenderObject* obj)
 static Texture* g_TextureScope;
 
 static void PixelProgramScope(
-    Vector2 screenUV, Vector2 objUV, RenderObject* obj,
+    Vector2 screenUV, Vector2 objUV,
     int cols, float screenUVdx, float objUVdx, Color* backbuffer)
 {
     const Color* texY = SampleTextureY(g_TextureScope, objUV);
@@ -206,7 +206,7 @@ static Color Dither(Color col, Vector2 uv)
 }
 
 static void PixelProgramView(
-    Vector2 screenUV, Vector2 objUV, RenderObject* obj,
+    Vector2 screenUV, Vector2 objUV,
     int cols, float screenUVdx, float objUVdx, Color* backbuffer)
 {
     const Color* textureY = SampleTextureY(g_TextureView, objUV);

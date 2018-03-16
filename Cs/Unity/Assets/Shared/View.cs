@@ -12,19 +12,19 @@ namespace PerformanceTest
         long lastUpdateTo = 0;
         long updateToLength = 0;
         Vector2 toPosition;
-        //Vector2 toZoom;
         long lastUpdate = 0;
+        Texture texture;
 
         public View(Device device, Texture view)
         {
+            texture = view;
             timer.Start();
 
             obj = new RenderObject(device);
-            obj.Textures.Add(view);
 
-            obj.Shader = ((suv, ouv, obj, cols, screenUVdx, objUVdx, backbuffer, backbufferOffset) =>
+            obj.Shader = ((suv, ouv, cols, screenUVdx, objUVdx, backbuffer, backbufferOffset) =>
             {
-                int texY = Shaders.SampleTextureY(obj.Textures[0], ouv);
+                int texY = Shaders.SampleTextureY(texture, ouv);
                 for (int x = 0; x < cols; ++x, suv.x += screenUVdx, ouv.x += objUVdx, backbufferOffset += 4)
                 {
                     Color result = new Color(0, 0, 0, 255);
@@ -34,7 +34,7 @@ namespace PerformanceTest
                     float dark = Shaders.Clamp(1 - 4f * (darkX * darkX + darkY * darkY), 0, 1);
                     if (dark != 0)
                     {
-                        result = Shaders.SampleTextureX(obj.Textures[0], texY, ouv);
+                        result = Shaders.SampleTextureX(texture, texY, ouv);
 
                         result.B = (byte)(result.B * dark);
                         result.G = (byte)(result.G * dark);

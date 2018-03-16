@@ -10,7 +10,7 @@ namespace Softy
             timer.Start();
         }
 
-        public delegate void PixelProgram(Vector2 screenUV, Vector2 objUV, RenderObject obj, int cols, float screenUVdx, float objUVdx, byte[] backbuffer, int backbufferIndex);
+        public delegate void PixelProgram(Vector2 screenUV, Vector2 objUV, int cols, float screenUVdx, float objUVdx, byte[] backbuffer, int backbufferIndex);
 
         static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
