@@ -38,10 +38,10 @@ namespace Softy
             return a;
         }
 
-        public static Color Dither(Color col, Vector2 uv)
+        public static Color Dither(Color col, uint offset)
         {
             uint dither = 32;
-            uint hash = IntHash((uint)(uv.x * 70003f + uv.y * 97787f + Time * 17f));
+            uint hash = IntHash(offset);
             byte v = (byte)(hash & (dither - 1));
             if (col.R < 255 - dither) col.R += v;
             if (col.G < 255 - dither) col.G += v;

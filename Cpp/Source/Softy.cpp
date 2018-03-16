@@ -98,7 +98,7 @@ static void DrawObjectJob(uint32_t start, uint32_t end, uint32_t threadnum, void
 void DrawStuff(float time, int screenWidth, int screenHeight, Color* backbuffer)
 {
     g_Time = time * 1000.0f;
-    g_TimeInt = (uint32_t)g_Time;
+    g_TimeInt = ((uint32_t)g_Time) * 17;
     g_CosTime1000 = cosf(g_Time / 1000.0f);
     g_CosTime600 = cosf(g_Time / 600.0f);
 
@@ -194,9 +194,9 @@ static uint32_t IntHash(uint32_t a)
     return a;
 }
 
-static Color Dither(Color col, Vector2 uv)
+static Color Dither(Color col, uint32_t offset)
 {
-    uint32_t hash = IntHash((uint32_t)(uv.x * 703.f + uv.y * 97787)) + g_TimeInt * 17;
+    uint32_t hash = IntHash(offset + g_TimeInt);
     uint32_t dither = 32;
     uint8_t v = (uint8_t)(hash & (dither - 1));
     if (col.r < 255 - dither) col.r += v;
@@ -229,7 +229,7 @@ static void PixelProgramView(
             result.g = (uint8_t)(result.g * dark);
             result.r = (uint8_t)(result.r * dark);
 
-            result = Dither(result, screenUV);
+            result = Dither(result, (uint32_t)(size_t)backbuffer);
         }
         if (result.a > 0)
         {
