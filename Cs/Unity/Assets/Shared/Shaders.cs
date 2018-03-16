@@ -32,9 +32,23 @@ namespace Softy
             return value.CompareTo(min) < 0 ? min : value.CompareTo(max) > 0 ? max : value;
         }
 
-        public static byte Dither(int strength, float salt)
+        static private uint IntHash(uint a)
         {
-            return (byte)((3.1415 * salt * timer.ElapsedTicks % (strength * 2 + 1)) - strength);
+            a = (a + 0x7ed55d16) + (a << 12);
+            a = (a ^ 0xc761c23c) ^ (a >> 19);
+            a = (a + 0x165667b1) + (a << 5);
+            a = (a + 0xd3a2646c) ^ (a << 9);
+            a = (a + 0xfd7046c5) + (a << 3);
+            a = (a ^ 0xb55a4f09) ^ (a >> 16);
+            return a;
+        }
+
+        public static byte Dither(int strength, Vector2 salt)
+        {
+            if (strength < 1)
+                strength = 1;
+            uint h = IntHash((uint)(salt.x * 70003 + salt.y * 97787 + _time * 17));
+            return (byte)(h % strength);
         }
 
         public static float Lerp(float v1, float v2, float ratio)

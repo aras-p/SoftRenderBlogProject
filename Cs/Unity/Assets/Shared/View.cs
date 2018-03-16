@@ -49,9 +49,9 @@ namespace PerformanceTest
                 int ditherG = Math.Min(dither, Math.Min(result.G, 255 - result.G));
                 int ditherR = Math.Min(dither, Math.Min(result.R, 255 - result.R));
 
-                result.B += Shaders.Dither(ditherB, suv.x);
-                result.G += Shaders.Dither(ditherG, suv.x);
-                result.R += Shaders.Dither(ditherR, suv.x);
+                result.B += Shaders.Dither(ditherB, suv);
+                result.G += Shaders.Dither(ditherG, suv);
+                result.R += Shaders.Dither(ditherR, suv);
 
                 return result;
             });
