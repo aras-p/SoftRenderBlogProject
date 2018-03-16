@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+#if UNITY_2018_1_OR_NEWER
+using System.Runtime.InteropServices;
+using Unity.Collections.LowLevel.Unsafe;
+using Unity.Jobs;
+#endif
 
 namespace Softy
 {
@@ -91,6 +96,22 @@ namespace Softy
             renderQueue.Enqueue(texture);
         }
 
+#if UNITY_2018_1_OR_NEWER
+        struct RenderJob : IJobParallelFor
+        {
+            public int strideCount;
+            [NativeDisableUnsafePtrRestriction] public IntPtr objPtr;
+            [NativeDisableUnsafePtrRestriction] public IntPtr devicePtr;
+            public void Execute(int i)
+            {
+                Device device = ((GCHandle)devicePtr).Target as Device;
+                RenderObject obj = ((GCHandle)objPtr).Target as RenderObject;
+                device.RenderThread(i, strideCount, obj);
+            }
+        };
+#endif
+
+
         public void Render()
         {
             while (renderQueue.Count > 0)
@@ -100,6 +121,22 @@ namespace Softy
                 lock (threadLock)
                 {
                     int strideCount = (int)Math.Ceiling((float)obj.Height / ThreadCount);
+#if UNITY_2018_1_OR_NEWER
+                    GCHandle handleObj = GCHandle.Alloc(obj, GCHandleType.Pinned);
+                    IntPtr ptrObj = (IntPtr)handleObj;
+                    GCHandle handleDevice = GCHandle.Alloc(this, GCHandleType.Pinned);
+                    IntPtr ptrDevice = (IntPtr)handleDevice;
+
+                    RenderJob jobData;
+                    jobData.strideCount = strideCount;
+                    jobData.objPtr = ptrObj;
+                    jobData.devicePtr = ptrDevice;
+                    JobHandle jobHandle = jobData.Schedule(ThreadCount, 1);
+                    jobHandle.Complete();
+
+                    handleObj.Free();
+                    handleDevice.Free();
+#else
 
                     for (int j = 0; j < ThreadCount; j++)
                     {
@@ -111,6 +148,7 @@ namespace Softy
                     {
                         _tasks[j].Wait();
                     }
+#endif
                 }
             }
 
