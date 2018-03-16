@@ -68,7 +68,7 @@ namespace SoftRenTest
         public void UpdateMainWindow()
         {
             var s = 0.0f;
-            if (counter == 10)
+            if (counter == 30)
             {
                 s = (float)((double)stopwatch.ElapsedTicks / (double)Stopwatch.Frequency) / counter;
                 stopwatch.Reset();

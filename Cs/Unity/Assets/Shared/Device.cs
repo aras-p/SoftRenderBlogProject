@@ -114,7 +114,7 @@ namespace Softy
                 }
             }
 
-            renderOdd = !renderOdd;
+            renderOdd = 1 - renderOdd;
         }
 
         void ClearThread(int index, int pixelCount, Color color)
@@ -133,10 +133,10 @@ namespace Softy
             }
         }
 
-        bool renderOdd = false;
+        int renderOdd = 0;
         void RenderThread(int index, int strideCount, RenderObject obj)
         {
-            Color result = new Color(0,0,0,255);
+            Color result = new Color(0, 0, 0, 255);
 
             int startHeight = Shaders.Clamp(obj.Y + strideCount * index, 0, Height);
             int endHeight = Shaders.Clamp(startHeight + strideCount, 0, Height);
@@ -144,14 +144,17 @@ namespace Softy
             int startWidth = Shaders.Clamp(obj.X, 0, Width);
             int endWidth = Shaders.Clamp(obj.X + obj.Width, 0, Width);
 
+            float invWidth = 1f / Width;
+            float invHeight = 1f / Height;
+            Vector2 invObjSize = new Vector2(1, 1) / obj.Size;
             for (int y = startHeight; y < endHeight; y++)
             {
                 for (int x = startWidth; x < endWidth; x++)
                 {
-                    if (Checkerboard && (x + y) % 2 == Convert.ToInt32(renderOdd) || !Checkerboard)
+                    if (Checkerboard && ((x + y) & 1) == renderOdd || !Checkerboard)
                     {
-                        Vector2 screenUV = new Vector2((float)x / Width, (float)y / Height);
-                        Vector2 objUV = (screenUV - obj.Position) / obj.Size;
+                        Vector2 screenUV = new Vector2((float)x * invWidth, (float)y * invHeight);
+                        Vector2 objUV = (screenUV - obj.Position) * invObjSize;
                         objUV = objUV.Clamp(0, 1);
 
                         result = obj.Sample(screenUV, objUV, result);

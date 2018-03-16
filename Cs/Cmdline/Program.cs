@@ -31,10 +31,10 @@ namespace SoftRenCsCmdline
             m_View = new PerformanceTest.View(m_Device, m_ViewTex);
             m_Scope = new PerformanceTest.Scope(m_Device, m_ScopeTex);
 
-            for (int i = 0; i < 200; ++i)
+            for (int i = 0; i < 300; ++i)
             {
                 UpdateLoop();
-                if (m_UpdateCounter == 10)
+                if (m_UpdateCounter == 30)
                 {
                     var s = (float)((double)m_Stopwatch.ElapsedTicks / (double)Stopwatch.Frequency) / m_UpdateCounter;
                     System.Console.WriteLine("ms: {0:F2}, FPS: {1:F1}", s * 1000.0f, 1.0f / s);
