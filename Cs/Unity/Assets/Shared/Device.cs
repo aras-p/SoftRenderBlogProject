@@ -159,13 +159,7 @@ namespace Softy
 
                         result = obj.Sample(screenUV, objUV, result);
 
-                        if (result.A == 255)
-                        {
-                            BackBuffer[y * Stride + x * 4] = result.B;
-                            BackBuffer[y * Stride + x * 4 + 1] = result.G;
-                            BackBuffer[y * Stride + x * 4 + 2] = result.R;
-                        }
-                        else if (result.A > 0 && result.A < 255)
+                        if (result.A > 0)
                         {
                             BackBuffer[y * Stride + x * 4] = result.B;
                             BackBuffer[y * Stride + x * 4 + 1] = result.G;

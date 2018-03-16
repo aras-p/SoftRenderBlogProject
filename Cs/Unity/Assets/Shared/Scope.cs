@@ -25,7 +25,7 @@ namespace PerformanceTest
 
             obj.Shader = ((suv, ouv, obj, wp) =>
             {
-                Color result = Shaders.SampleTexture(obj.Textures[0], ouv, wp);
+                Color result = Shaders.SampleTexture(obj.Textures[0], ouv);
 
                 return result;
             });

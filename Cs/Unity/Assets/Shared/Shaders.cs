@@ -19,13 +19,15 @@ namespace Softy
 
         public static PixelProgram Textured = (suv, ouv, obj, wp) =>
         {
-            return SampleTexture(obj.Textures[0], ouv, wp);
+            return SampleTexture(obj.Textures[0], ouv);
         };
 
         // Intrisic functions
         static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
-        private static int _time = 0;
+        private static float _time = 0;
+        private static float _cosTime1000;
+        private static float _cosTime600;
 
         public static float Clamp(float value, float min, float max)
         {
@@ -47,12 +49,15 @@ namespace Softy
             return a;
         }
 
-        public static byte Dither(int strength, Vector2 salt)
+        public static Color Dither(Color col, Vector2 uv)
         {
-            if (strength < 1)
-                strength = 1;
-            uint h = IntHash((uint)(salt.x * 70003 + salt.y * 97787 + _time * 17));
-            return (byte)(h % strength);
+            uint hash = IntHash((uint)(uv.x * 70003f + uv.y * 97787f + _time * 17f));
+            uint dither = 32;
+            byte v = (byte)(hash & (dither - 1));
+            if (col.R < 255 - dither) col.R += v;
+            if (col.G < 255 - dither) col.G += v;
+            if (col.B < 255 - dither) col.B += v;
+            return col;
         }
 
         public static float Lerp(float v1, float v2, float ratio)
@@ -60,29 +65,39 @@ namespace Softy
             return v1 * ratio + v2 * (1 - ratio);
         }
 
-        public static int Time()
+        public static float Time()
         {
             return _time;
+        }
+        public static float CosTime1000()
+        {
+            return _cosTime1000;
+        }
+        public static float CosTime600()
+        {
+            return _cosTime600;
         }
 
         public static void TimeUpdate()
         {
-            _time = (int)timer.ElapsedMilliseconds;
+            _time = (float)timer.ElapsedMilliseconds;
+            _cosTime1000 = (float)Math.Cos(_time / 1000.0f);
+            _cosTime600 = (float)Math.Cos(_time / 600.0f);
         }
 
-        public static Color SampleTexture(Texture texture, Vector2 objUV, Color result)
+        public static Color SampleTexture(Texture texture, Vector2 objUV)
         {
             int coordX = (int)Math.Round((texture.Width - 1) * objUV.x);
             int coordY = (int)Math.Round((texture.Height - 1) * objUV.y);
             int height = coordY * texture.Stride;
             int width = coordX * 4;
 
-            result.B = texture.Data[height + width];
-            result.G = texture.Data[height + width + 1];
-            result.R = texture.Data[height + width + 2];
-            result.A = texture.Data[height + width + 3];
-
-            return result;
+            int offs = height + width;
+            return new Color(
+                texture.Data[offs],
+                texture.Data[offs + 1],
+                texture.Data[offs + 2],
+                texture.Data[offs + 3]);
         }
     }
 }

@@ -30,28 +30,20 @@ namespace PerformanceTest
             {
                 Color result = new Color(0, 0, 0, 255);
 
-                float darkX = Math.Abs(suv.x - 0.5f + (float)Math.Cos(Shaders.Time() / 1000.0f) * 0.1f);
-                float darkY = Math.Abs(suv.y - 0.5f + (float)Math.Cos(Shaders.Time() / 600.0f) * 0.1f);
+                float darkX = Math.Abs(suv.x - 0.5f + Shaders.CosTime1000() * 0.1f);
+                float darkY = Math.Abs(suv.y - 0.5f + Shaders.CosTime600() * 0.1f);
                 float dark = Shaders.Clamp(1 - 4f * (darkX * darkX + darkY * darkY), 0, 1);
                 if (dark == 0)
                 {
                     return result;
                 }
 
-                result = Shaders.SampleTexture(obj.Textures[0], ouv, wp);
+                result = Shaders.SampleTexture(obj.Textures[0], ouv);
 
                 result.B = (byte)(result.B * dark);
                 result.G = (byte)(result.G * dark);
                 result.R = (byte)(result.R * dark);
-
-                const int dither = 32;
-                int ditherB = Math.Min(dither, Math.Min(result.B, 255 - result.B));
-                int ditherG = Math.Min(dither, Math.Min(result.G, 255 - result.G));
-                int ditherR = Math.Min(dither, Math.Min(result.R, 255 - result.R));
-
-                result.B += Shaders.Dither(ditherB, suv);
-                result.G += Shaders.Dither(ditherG, suv);
-                result.R += Shaders.Dither(ditherR, suv);
+                result = Shaders.Dither(result, suv);
 
                 return result;
             });

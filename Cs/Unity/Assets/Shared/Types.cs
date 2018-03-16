@@ -29,10 +29,9 @@ namespace Softy
 
         public Vector2 Clamp(float min, float max)
         {
-            Vector2 result = new Vector2();
-            result.x = x < min ? min : x > max ? max : x;
-            result.y = y < min ? min : y > max ? max : y;
-            return result;
+            return new Vector2(
+                x < min ? min : x > max ? max : x,
+                y < min ? min : y > max ? max : y);
         }
 
         public float DistanceFromSqrd(Vector2 a)
