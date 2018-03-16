@@ -10,3 +10,5 @@ Cs/Unity/Assembly-CSharp.csproj
 Cs/CmdLineResult.png
 Cs/SoftRenTest.exe.config
 Cpp/Windows/x64/
+Cpp/Mac/SoftyCpu.xcodeproj/project.xcworkspace/
+xcschememanagement.plist
