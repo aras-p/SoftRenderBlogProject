@@ -6,18 +6,7 @@ namespace Softy
 {
     public struct Vector2
     {
-        private float x, y;
-
-        public float X
-        {
-            get => x;
-            set => x = value;
-        }
-        public float Y
-        {
-            get => y;
-            set => y = value;
-        }
+        public float x, y;
 
         public int Length => 2;
 
@@ -25,19 +14,16 @@ namespace Softy
         {
             get
             {
-                float result = 0;
-                result += (float)Math.Pow(x, 2);
-                result += (float)Math.Pow(y, 2);
-                return result;
+                return x * x + y * y;
             }
         }
 
         public float Magnitude => (float)Math.Sqrt(MagnitudeSqrd);
 
-        public Vector2(float x_, float y_)
+        public Vector2(float _x, float _y)
         {
-            x = x_;
-            y = y_;
+            x = _x;
+            y = _y;
         }
 
 
@@ -54,8 +40,8 @@ namespace Softy
             float result = 0;
 
             Vector2 distanceVector = a - this;
-            result += (float)Math.Pow(distanceVector.x, 2);
-            result += (float)Math.Pow(distanceVector.y, 2);
+            result += distanceVector.x * distanceVector.x;
+            result += distanceVector.y * distanceVector.y;
             return result;
         }
 
@@ -66,68 +52,73 @@ namespace Softy
 
         public float Dot(Vector2 a, int dimensions = 0)
         {
-            float result = 0;
-            result += x * a.x;
-            result += y * a.y;
-            return result;
+            return x * a.x + y * a.y;
         }
 
         public static Vector2 operator +(Vector2 a, float b)
         {
-            Vector2 result = new Vector2();
-            result.x = a.x + b;
-            result.y = a.y + b;
-            return result;
+            return new Vector2
+            {
+                x = a.x + b,
+                y = a.y + b
+            };
         }
         public static Vector2 operator -(Vector2 a, float b)
         {
-            Vector2 result = new Vector2();
-            result.x = (dynamic)a.x - b; //@TODO: dynamic?
-            result.y = (dynamic)a.y - b;
-            return result;
+            return new Vector2
+            {
+                x = a.x - b,
+                y = a.y - b
+            };
         }
         public static Vector2 operator *(Vector2 a, float b)
         {
-            Vector2 result = new Vector2();
-            result.x = a.x * b;
-            result.y = a.y * b;
-            return result;
+            return new Vector2
+            {
+                x = a.x * b,
+                y = a.y * b
+            };
         }
         public static Vector2 operator /(Vector2 a, float b)
         {
-            Vector2 result = new Vector2();
-            result.x = a.x / b;
-            result.y = a.y / b;
-            return result;
+            return new Vector2
+            {
+                x = a.x / b,
+                y = a.y / b
+            };
         }
 
         public static Vector2 operator +(Vector2 a, Vector2 b)
         {
-            Vector2 result = new Vector2();
-            result.x = a.x + b.x;
-            result.y = a.y + b.y;
-            return result;
+            return new Vector2
+            {
+                x = a.x + b.x,
+                y = a.y + b.y
+            };
         }
         public static Vector2 operator -(Vector2 a, Vector2 b)
         {
-            Vector2 result = new Vector2();
-            result.x = a.x - b.x;
-            result.y = a.y - b.y;
-            return result;
+            return new Vector2
+            {
+                x = a.x - b.x,
+                y = a.y - b.y
+            };
         }
         public static Vector2 operator *(Vector2 a, Vector2 b)
         {
-            Vector2 result = new Vector2();
-            result.x = a.x * b.x;
-            result.y = a.y * b.y;
-            return result;
+            return new Vector2
+            {
+                x = a.x * b.x,
+                y = a.y * b.y
+            };
         }
         public static Vector2 operator /(Vector2 a, Vector2 b)
         {
-            Vector2 result = new Vector2();
-            result.x = a.x / b.x;
-            result.y = a.y / b.y;
-            return result;
+            return new Vector2
+            {
+                x = a.x / b.x,
+                y = a.y / b.y
+            };
         }
     }
 
@@ -231,23 +222,23 @@ namespace Softy
 
         public int X
         {
-            get => (int)(Position.X * device.Width);
-            set => Position.X = (float)value / device.Width;
+            get => (int)(Position.x * device.Width);
+            set => Position.x = (float)value / device.Width;
         }
         public int Y
         {
-            get => (int)(Position.Y * device.Height);
-            set => Position.Y = (float)value / device.Height;
+            get => (int)(Position.y * device.Height);
+            set => Position.y = (float)value / device.Height;
         }
         public int Width
         {
-            get => (int)(Size.X * device.Width);
-            set => Size.X = (float)value / device.Width;
+            get => (int)(Size.x * device.Width);
+            set => Size.x = (float)value / device.Width;
         }
         public int Height
         {
-            get => (int)(Size.Y * device.Height);
-            set => Size.Y = (float)value / device.Height;
+            get => (int)(Size.y * device.Height);
+            set => Size.y = (float)value / device.Height;
         }
 
         public RenderObject(Device device)

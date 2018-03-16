@@ -16,6 +16,7 @@ namespace PerformanceTest
         long lastUpdateTo = 0;
         long updateToLength = 0;
         Vector2 toPosition;
+        //Vector2 toZoom;
         long lastUpdate = 0;
 
         public View(Device device, Texture view)
@@ -29,10 +30,10 @@ namespace PerformanceTest
             {
                 Color result = new Color(0,0,0,255);
 
-                float darkX = Math.Abs(suv.X - 0.5f + (float)Math.Cos(Shaders.Time() / 1000.0f) * 0.1f);
-                float darkY = Math.Abs(suv.Y - 0.5f + (float)Math.Cos(Shaders.Time() / 600.0f) * 0.1f);
+                float darkX = Math.Abs(suv.x - 0.5f + (float)Math.Cos(Shaders.Time() / 1000.0f) * 0.1f);
+                float darkY = Math.Abs(suv.y - 0.5f + (float)Math.Cos(Shaders.Time() / 600.0f) * 0.1f);
                 float dark = Shaders.Clamp(1 - 4f * (darkX * darkX + darkY * darkY), 0, 1);
-                if(dark == 0)
+                if (dark == 0)
                 {
                     return result;
                 }
@@ -48,9 +49,9 @@ namespace PerformanceTest
                 int ditherG = Math.Min(dither, Math.Min(result.G, 255 - result.G));
                 int ditherR = Math.Min(dither, Math.Min(result.R, 255 - result.R));
 
-                result.B += Shaders.Dither(ditherB, suv.X);
-                result.G += Shaders.Dither(ditherG, suv.X);
-                result.R += Shaders.Dither(ditherR, suv.X);
+                result.B += Shaders.Dither(ditherB, suv.x);
+                result.G += Shaders.Dither(ditherG, suv.x);
+                result.R += Shaders.Dither(ditherR, suv.x);
 
                 return result;
             });
@@ -58,7 +59,7 @@ namespace PerformanceTest
 
         public void Update()
         {
-            if(timer.ElapsedMilliseconds > lastUpdateTo + updateToLength)
+            if (timer.ElapsedMilliseconds > lastUpdateTo + updateToLength)
             {
                 toPosition = new Vector2((float)random.NextDouble() - 1, (float)random.NextDouble() - 1);
 
@@ -66,10 +67,10 @@ namespace PerformanceTest
                 lastUpdateTo = timer.ElapsedMilliseconds;
             }
 
-            obj.Size.X = obj.Size.Y = 2;
+            obj.Size.x = obj.Size.y = 2;
             float ratio = ((float)timer.ElapsedMilliseconds - lastUpdateTo) / 10000;
-            obj.Position.X = Shaders.Lerp(obj.Position.X, toPosition.X, 0.99f);
-            obj.Position.Y = Shaders.Lerp(obj.Position.Y, toPosition.Y, 0.99f);
+            obj.Position.x = Shaders.Lerp(obj.Position.x, toPosition.x, 0.99f);
+            obj.Position.y = Shaders.Lerp(obj.Position.y, toPosition.y, 0.99f);
             lastUpdate = timer.ElapsedMilliseconds;
         }
 
