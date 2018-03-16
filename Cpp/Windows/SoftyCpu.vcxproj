@@ -149,10 +149,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\enkiTS\TaskScheduler.cpp" />
+    <ClCompile Include="..\Source\enkiTS\TaskScheduler_c.cpp" />
     <ClCompile Include="..\Source\Softy.cpp" />
     <ClCompile Include="SoftyWin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\enkiTS\Atomics.h" />
+    <ClInclude Include="..\Source\enkiTS\LockLessMultiReadPipe.h" />
+    <ClInclude Include="..\Source\enkiTS\TaskScheduler.h" />
+    <ClInclude Include="..\Source\enkiTS\TaskScheduler_c.h" />
+    <ClInclude Include="..\Source\enkiTS\Threads.h" />
     <ClInclude Include="..\Source\Softy.h" />
     <ClInclude Include="..\Source\stb_image.h" />
   </ItemGroup>

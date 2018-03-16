@@ -14,6 +14,8 @@
 		2B2D97C120519C7100520EC1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B2D97BF20519C7100520EC1 /* Main.storyboard */; };
 		2B2D97C420519C7100520EC1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B2D97C320519C7100520EC1 /* main.m */; };
 		2BE32DCA205BEDA6003C05B4 /* Softy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE32DC7205BEDA6003C05B4 /* Softy.cpp */; };
+		2BE32DD2205BFC31003C05B4 /* TaskScheduler_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE32DCE205BFC31003C05B4 /* TaskScheduler_c.cpp */; };
+		2BE32DD3205BFC31003C05B4 /* TaskScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE32DD0205BFC31003C05B4 /* TaskScheduler.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,13 @@
 		2BE32DC7205BEDA6003C05B4 /* Softy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Softy.cpp; path = ../Source/Softy.cpp; sourceTree = "<group>"; };
 		2BE32DC8205BEDA6003C05B4 /* Softy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Softy.h; path = ../Source/Softy.h; sourceTree = "<group>"; };
 		2BE32DC9205BEDA6003C05B4 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image.h; path = ../Source/stb_image.h; sourceTree = "<group>"; };
+		2BE32DCB205BFC31003C05B4 /* TaskScheduler_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskScheduler_c.h; path = ../Source/enkiTS/TaskScheduler_c.h; sourceTree = "<group>"; };
+		2BE32DCC205BFC31003C05B4 /* LockLessMultiReadPipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LockLessMultiReadPipe.h; path = ../Source/enkiTS/LockLessMultiReadPipe.h; sourceTree = "<group>"; };
+		2BE32DCD205BFC31003C05B4 /* Threads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Threads.h; path = ../Source/enkiTS/Threads.h; sourceTree = "<group>"; };
+		2BE32DCE205BFC31003C05B4 /* TaskScheduler_c.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TaskScheduler_c.cpp; path = ../Source/enkiTS/TaskScheduler_c.cpp; sourceTree = "<group>"; };
+		2BE32DCF205BFC31003C05B4 /* Atomics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Atomics.h; path = ../Source/enkiTS/Atomics.h; sourceTree = "<group>"; };
+		2BE32DD0205BFC31003C05B4 /* TaskScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TaskScheduler.cpp; path = ../Source/enkiTS/TaskScheduler.cpp; sourceTree = "<group>"; };
+		2BE32DD1205BFC31003C05B4 /* TaskScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskScheduler.h; path = ../Source/enkiTS/TaskScheduler.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +57,13 @@
 		2B2D97A520519C7100520EC1 = {
 			isa = PBXGroup;
 			children = (
+				2BE32DCF205BFC31003C05B4 /* Atomics.h */,
+				2BE32DCC205BFC31003C05B4 /* LockLessMultiReadPipe.h */,
+				2BE32DCE205BFC31003C05B4 /* TaskScheduler_c.cpp */,
+				2BE32DCB205BFC31003C05B4 /* TaskScheduler_c.h */,
+				2BE32DD0205BFC31003C05B4 /* TaskScheduler.cpp */,
+				2BE32DD1205BFC31003C05B4 /* TaskScheduler.h */,
+				2BE32DCD205BFC31003C05B4 /* Threads.h */,
 				2BE32DC7205BEDA6003C05B4 /* Softy.cpp */,
 				2BE32DC8205BEDA6003C05B4 /* Softy.h */,
 				2BE32DC9205BEDA6003C05B4 /* stb_image.h */,
@@ -160,7 +176,9 @@
 				2B2D97BB20519C7100520EC1 /* Shaders.metal in Sources */,
 				2B2D97B620519C7100520EC1 /* Renderer.mm in Sources */,
 				2B2D97B920519C7100520EC1 /* GameViewController.m in Sources */,
+				2BE32DD3205BFC31003C05B4 /* TaskScheduler.cpp in Sources */,
 				2B2D97B320519C7100520EC1 /* AppDelegate.m in Sources */,
+				2BE32DD2205BFC31003C05B4 /* TaskScheduler_c.cpp in Sources */,
 				2BE32DCA205BEDA6003C05B4 /* Softy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
