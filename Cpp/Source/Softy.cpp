@@ -30,14 +30,14 @@ inline Vector2 clamp(Vector2 a, float min, float max) { return Vector2(clamp(a.x
 
 struct RenderObject;
 
-typedef Color PixelProgram(Vector2 screenUV, Vector2 objUV, RenderObject* obj);
+typedef void PixelProgramSpan(Vector2 screenUV, Vector2 objUV, RenderObject* obj, int cols, float screenUVdx, float objUVdx, Color* backbuffer);
 typedef void UpdateFunc(RenderObject* obj);
 
 struct RenderObject
 {
     Vector2 position;
     Vector2 size;
-    PixelProgram* shader;
+    PixelProgramSpan* shader;
     UpdateFunc* tick;
 };
 
@@ -75,17 +75,9 @@ static void DrawObject(int screenWidth, int screenHeight, int rowStartY, int row
 
         int yOffset = y * screenWidth;
         Vector2 screenUV = Vector2(startX * invWidth, y * invHeight);
-        for (int x = startX; x < endX; ++x, screenUV.x += invWidth)
-        {
-            Vector2 objUV = screenUV * objInvSize - objPosTimesInvSize;
-            objUV = clamp(objUV, 0.f, 1.f);
-
-            Color result = obj->shader(screenUV, objUV, obj);
-            if (result.a > 0)
-            {
-                backbuffer[yOffset + x] = result;
-            }
-        }
+        Vector2 objUV = screenUV * objInvSize - objPosTimesInvSize;
+        objUV.y = clamp(objUV.y, 0.f, 1.f);
+        obj->shader(screenUV, objUV, obj, endX - startX, invWidth, invWidth*objInvSize.x, backbuffer + yOffset + startX);
     }
 }
 
@@ -151,9 +143,18 @@ static void UpdateScope(RenderObject* obj)
 
 static Texture* g_TextureScope;
 
-static Color PixelProgramScope(Vector2 screenUV, Vector2 objUV, RenderObject* obj)
+static void PixelProgramScope(
+    Vector2 screenUV, Vector2 objUV, RenderObject* obj,
+    int cols, float screenUVdx, float objUVdx, Color* backbuffer)
+
 {
-    return SampleTexture(g_TextureScope, objUV);
+    for (int x = 0; x < cols; ++x, screenUV.x += screenUVdx, objUV.x += objUVdx, backbuffer++)
+    {
+        objUV.x = clamp(objUV.x, 0.f, 1.f);
+        Color result = SampleTexture(g_TextureScope, objUV);
+        if (result.a > 0)
+            *backbuffer = result;
+    }
 }
 
 static Texture* g_TextureView;
@@ -199,29 +200,33 @@ static Color Dither(Color col, Vector2 uv)
     return col;
 }
 
-
-static Color PixelProgramView(Vector2 suv, Vector2 ouv, RenderObject* obj)
+static void PixelProgramView(
+    Vector2 screenUV, Vector2 objUV, RenderObject* obj,
+    int cols, float screenUVdx, float objUVdx, Color* backbuffer)
 {
-    Color result = Color(0, 0, 0, 255);
-
-    float darkX = fabs(suv.x - 0.5f + g_CosTime1000 * 0.1f);
-    float darkY = fabs(suv.y - 0.5f + g_CosTime600 * 0.1f);
-    float dark = clamp(1.f - 4.f * (darkX * darkX + darkY * darkY), 0.f, 1.f);
-    if (dark == 0.f)
+    for (int x = 0; x < cols; ++x, screenUV.x += screenUVdx, objUV.x += objUVdx, backbuffer++)
     {
-        return result;
+        objUV.x = clamp(objUV.x, 0.f, 1.f);
+        Color result = Color(0, 0, 0, 255);
+
+        float darkX = fabs(screenUV.x - 0.5f + g_CosTime1000 * 0.1f);
+        float darkY = fabs(screenUV.y - 0.5f + g_CosTime600 * 0.1f);
+        float dark = clamp(1.f - 4.f * (darkX * darkX + darkY * darkY), 0.f, 1.f);
+        if (dark != 0.f)
+        {
+            result = SampleTexture(g_TextureView, objUV);
+
+            result.b = (uint8_t)(result.b * dark);
+            result.g = (uint8_t)(result.g * dark);
+            result.r = (uint8_t)(result.r * dark);
+
+            result = Dither(result, screenUV);
+        }
+        if (result.a > 0)
+        {
+            *backbuffer = result;
+        }
     }
-
-    result = SampleTexture(g_TextureView, ouv);
-
-    result.b = (uint8_t)(result.b * dark);
-    result.g = (uint8_t)(result.g * dark);
-    result.r = (uint8_t)(result.r * dark);
-
-    result = Dither(result, suv);
-
-    return result;
-
 }
 
 

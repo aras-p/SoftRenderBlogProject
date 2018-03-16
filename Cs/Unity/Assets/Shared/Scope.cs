@@ -22,11 +22,18 @@ namespace PerformanceTest
             obj = new RenderObject(device);
             obj.Textures.Add(scope);
 
-            obj.Shader = ((suv, ouv, obj) =>
+            obj.Shader = ((suv, ouv, obj, cols, screenUVdx, objUVdx, backbuffer, backbufferOffset) =>
             {
-                Color result = Shaders.SampleTexture(obj.Textures[0], ouv);
-
-                return result;
+                for (int x = 0; x < cols; ++x, suv.x += screenUVdx, ouv.x += objUVdx, backbufferOffset += 4)
+                {
+                    Color result = Shaders.SampleTexture(obj.Textures[0], ouv);
+                    if (result.A > 0)
+                    {
+                        backbuffer[backbufferOffset] = result.B;
+                        backbuffer[backbufferOffset+1] = result.G;
+                        backbuffer[backbufferOffset+2] = result.R;
+                    }
+                }
             });
         }
 

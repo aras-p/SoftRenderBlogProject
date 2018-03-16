@@ -194,11 +194,6 @@ namespace Softy
             this.device = device;
         }
 
-        public Color Sample(Vector2 screenUV, Vector2 objUV)
-        {
-            return Shader(screenUV, objUV, this);
-        }
-
         public void Draw()
         {
             device.Draw(this);

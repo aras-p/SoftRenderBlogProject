@@ -10,14 +10,8 @@ namespace Softy
             timer.Start();
         }
 
-        public delegate Color PixelProgram(Vector2 screenUV, Vector2 objUV, RenderObject obj);
+        public delegate void PixelProgram(Vector2 screenUV, Vector2 objUV, RenderObject obj, int cols, float screenUVdx, float objUVdx, byte[] backbuffer, int backbufferIndex);
 
-        public static PixelProgram Textured = (suv, ouv, obj) =>
-        {
-            return SampleTexture(obj.Textures[0], ouv);
-        };
-
-        // Intrisic functions
         static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
         public static float Time = 0;

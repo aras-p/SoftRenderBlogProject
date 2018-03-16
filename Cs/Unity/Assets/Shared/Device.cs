@@ -184,6 +184,7 @@ namespace Softy
 
             float invWidth = 1f / Width;
             float invHeight = 1f / Height;
+            Vector2 objPos = obj.Position;
             Vector2 invObjSize = new Vector2(1, 1) / obj.Size;
             int yOffset = startHeight * Stride;
             var checkerboard = Checkerboard;
@@ -193,23 +194,10 @@ namespace Softy
                 if (checkerboard && ((y % 2) != renderOdd))
                     continue;
                 int offset = yOffset + startWidth * 4;
-                for (int x = startWidth; x < endWidth; x++)
-                {
-                    Vector2 screenUV = new Vector2((float)x * invWidth, (float)y * invHeight);
-                    Vector2 objUV = (screenUV - obj.Position) * invObjSize;
-                    objUV = objUV.Clamp(0, 1);
-
-                    result = obj.Sample(screenUV, objUV);
-
-                    if (result.A > 0)
-                    {
-                        backbuffer[offset] = result.B;
-                        backbuffer[offset + 1] = result.G;
-                        backbuffer[offset + 2] = result.R;
-                    }
-                    offset += 4;
-                }
-                
+                Vector2 screenUV = new Vector2((float)startWidth * invWidth, (float)y * invHeight);
+                Vector2 objUV = (screenUV - objPos) * invObjSize;
+                objUV.y = Shaders.Clamp(objUV.y, 0f, 1f);
+                obj.Shader(screenUV, objUV, obj, endWidth - startWidth, invWidth, invWidth*invObjSize.x, backbuffer, offset);
             }
         }
     }
