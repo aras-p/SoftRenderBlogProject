@@ -28,7 +28,7 @@ namespace PerformanceTest
 
             obj.Shader = ((suv, ouv, obj, wp) =>
             {
-                Color result = new Color(0,0,0,255);
+                Color result = new Color(0, 0, 0, 255);
 
                 float darkX = Math.Abs(suv.x - 0.5f + (float)Math.Cos(Shaders.Time() / 1000.0f) * 0.1f);
                 float darkY = Math.Abs(suv.y - 0.5f + (float)Math.Cos(Shaders.Time() / 600.0f) * 0.1f);
@@ -59,6 +59,7 @@ namespace PerformanceTest
 
         public void Update()
         {
+            Shaders.TimeUpdate();
             if (timer.ElapsedMilliseconds > lastUpdateTo + updateToLength)
             {
                 toPosition = new Vector2((float)random.NextDouble() - 1, (float)random.NextDouble() - 1);

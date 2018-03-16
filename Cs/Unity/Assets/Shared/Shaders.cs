@@ -22,9 +22,10 @@ namespace Softy
             return SampleTexture(obj.Textures[0], ouv, wp);
         };
 
-        // Intrinsic functions
+        // Intrisic functions
         static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
+        private static int _time = 0;
 
         public static T Clamp<T>(T value, T min, T max) where T : IComparable
         {
@@ -43,9 +44,14 @@ namespace Softy
 
         public static int Time()
         {
-            return (int)timer.ElapsedMilliseconds;
+            return _time;
         }
-        
+
+        public static void TimeUpdate()
+        {
+            _time = (int)timer.ElapsedMilliseconds;
+        }
+
         public static Color SampleTexture(Texture texture, Vector2 objUV, Color result)
         {
             int coordX = (int)Math.Round((texture.Width - 1) * objUV.x);
