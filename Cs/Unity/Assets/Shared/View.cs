@@ -15,8 +15,7 @@ namespace PerformanceTest
         Random random = new Random();
         long lastUpdateTo = 0;
         long updateToLength = 0;
-        Vector toPosition;
-        Vector toZoom;
+        Vector2 toPosition;
         long lastUpdate = 0;
 
         public View(Device device, Texture view)
@@ -61,7 +60,7 @@ namespace PerformanceTest
         {
             if(timer.ElapsedMilliseconds > lastUpdateTo + updateToLength)
             {
-                toPosition = new Vector((float)random.NextDouble() - 1, (float)random.NextDouble() - 1);
+                toPosition = new Vector2((float)random.NextDouble() - 1, (float)random.NextDouble() - 1);
 
                 updateToLength = random.Next(400, 1500);
                 lastUpdateTo = timer.ElapsedMilliseconds;

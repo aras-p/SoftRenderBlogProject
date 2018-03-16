@@ -12,8 +12,8 @@ namespace PerformanceTest
         Device device;
         RenderObject obj;
 
-        static readonly Vector Size = new Vector(0.8f, 0.8f);
-        static readonly Vector Position = new Vector(0.5f, 0.5f);
+        static readonly Vector2 Size = new Vector2(0.8f, 0.8f);
+        static readonly Vector2 Position = new Vector2(0.5f, 0.5f);
 
         public Scope(Device device, Texture scope)
         {
@@ -21,7 +21,6 @@ namespace PerformanceTest
 
             obj = new RenderObject(device);
             obj.Textures.Add(scope);
-            obj.Vectors.Add(new Vector(Position.X, Position.Y));
 
             obj.Shader = ((suv, ouv, obj, wp) =>
             {

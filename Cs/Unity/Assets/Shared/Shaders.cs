@@ -10,7 +10,7 @@ namespace Softy
             timer.Start();
         }
 
-        public delegate Color PixelProgram(Vector screenUV, Vector objUV, RenderObject obj, Color workingPixel);
+        public delegate Color PixelProgram(Vector2 screenUV, Vector2 objUV, RenderObject obj, Color workingPixel);
 
         public static PixelProgram Colored = (suv, ouv, obj, wp) =>
         {
@@ -22,7 +22,7 @@ namespace Softy
             return SampleTexture(obj.Textures[0], ouv, wp);
         };
 
-        // Intristic functions
+        // Intrinsic functions
         static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
 
@@ -46,7 +46,7 @@ namespace Softy
             return (int)timer.ElapsedMilliseconds;
         }
         
-        public static Color SampleTexture(Texture texture, Vector objUV, Color result)
+        public static Color SampleTexture(Texture texture, Vector2 objUV, Color result)
         {
             int coordX = (int)Math.Round((texture.Width - 1) * objUV.X);
             int coordY = (int)Math.Round((texture.Height - 1) * objUV.Y);

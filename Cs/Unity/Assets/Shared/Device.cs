@@ -150,8 +150,8 @@ namespace Softy
                 {
                     if (Checkerboard && (x + y) % 2 == Convert.ToInt32(renderOdd) || !Checkerboard)
                     {
-                        Vector screenUV = new Vector((float)x / Width, (float)y / Height);
-                        Vector objUV = (screenUV - obj.Position) / obj.Size;
+                        Vector2 screenUV = new Vector2((float)x / Width, (float)y / Height);
+                        Vector2 objUV = (screenUV - obj.Position) / obj.Size;
                         objUV = objUV.Clamp(0, 1);
 
                         result = obj.Sample(screenUV, objUV, result);

@@ -4,241 +4,134 @@ using static Softy.Shaders;
 
 namespace Softy
 {
-    public class Vector
+    public class Vector2
     {
-        public float[] Data;
+        private float x, y;
 
         public float X
         {
-            get => Data[0];
-            set => Data[0] = value;
+            get => x;
+            set => x = value;
         }
         public float Y
         {
-            get => Data[1];
-            set => Data[1] = value;
-        }
-        public float Z
-        {
-            get => Data[2];
-            set => Data[2] = value;
-        }
-        public float W
-        {
-            get => Data[3];
-            set => Data[3] = value;
+            get => y;
+            set => y = value;
         }
 
-        public int Length => Data.Length;
+        public int Length => 2;
 
         public float MagnitudeSqrd
         {
             get
             {
                 float result = 0;
-
-                for (int i = 0; i < Data.Length; i++)
-                {
-                    result += (float)Math.Pow(Data[i], 2);
-                }
-
+                result += (float)Math.Pow(x, 2);
+                result += (float)Math.Pow(y, 2);
                 return result;
             }
         }
 
         public float Magnitude => (float)Math.Sqrt(MagnitudeSqrd);
 
-        public float this[int i]
+        public Vector2()
         {
-            get => Data[i];
-            set => Data[i] = value;
         }
 
-        public Vector(int i)
-        {
-            Data = new float[i];
-        }
-
-        public Vector(float x, float y) : this(2)
+        public Vector2(float x, float y)
         {
             X = x;
             Y = y;
         }
 
-        public Vector(float x, float y, float z) : this(3)
+
+        public Vector2 Clamp(float min, float max)
         {
-            X = x;
-            Y = y;
-            Z = z;
-        }
-
-        public Vector(float x, float y, float z, float w) : this(4)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-            W = w;
-        }
-
-        public Vector Clamp(float min, float max)
-        {
-            Vector result = new Vector(Length);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = Data[i] < min ? min : Data[i] > max ? max : Data[i];
-            }
-
+            Vector2 result = new Vector2();
+            result.x = x < min ? min : x > max ? max : x;
+            result.y = y < min ? min : y > max ? max : y;
             return result;
         }
 
-        public float DistanceFromSqrd(Vector a)
+        public float DistanceFromSqrd(Vector2 a)
         {
             float result = 0;
 
-            Vector distanceVector = a - this;
-
-            for (int i = 0; i < MinLength(this, a); i++)
-            {
-                result += (float)Math.Pow(distanceVector.Data[i], 2);
-            }
-
+            Vector2 distanceVector = a - this;
+            result += (float)Math.Pow(distanceVector.x, 2);
+            result += (float)Math.Pow(distanceVector.y, 2);
             return result;
         }
 
-        public float DistanceFrom(Vector a)
+        public float DistanceFrom(Vector2 a)
         {
             return (float)Math.Sqrt(DistanceFromSqrd(a));
         }
 
-        public float Dot(Vector a, int dimensions = 0)
+        public float Dot(Vector2 a, int dimensions = 0)
         {
             float result = 0;
-            int d = (dimensions > 0 ? dimensions : Data.Length);
-
-            for (int i = 0; i < d; i++)
-            {
-                result += Data[i] * a[i];
-            }
-
+            result += x * a.x;
+            result += y * a.y;
             return result;
         }
 
-        public override string ToString()
+        public static Vector2 operator +(Vector2 a, float b)
         {
-            string result = "Vector(";
-            for (int i = 0; i < Length; i++)
-            {
-                result += Data[i];
-
-                if (i < Length - 1)
-                {
-                    result += ", ";
-                }
-            }
-            result += ")";
-
+            Vector2 result = new Vector2();
+            result.x = a.x + b;
+            result.y = a.y + b;
+            return result;
+        }
+        public static Vector2 operator -(Vector2 a, float b)
+        {
+            Vector2 result = new Vector2();
+            result.x = (dynamic)a.x - b; //@TODO: dynamic?
+            result.y = (dynamic)a.y - b;
+            return result;
+        }
+        public static Vector2 operator *(Vector2 a, float b)
+        {
+            Vector2 result = new Vector2();
+            result.x = a.x * b;
+            result.y = a.y * b;
+            return result;
+        }
+        public static Vector2 operator /(Vector2 a, float b)
+        {
+            Vector2 result = new Vector2();
+            result.x = a.x / b;
+            result.y = a.y / b;
             return result;
         }
 
-        public static Vector operator +(Vector a, float b)
+        public static Vector2 operator +(Vector2 a, Vector2 b)
         {
-            Vector result = new Vector(a.Length);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = a.Data[i] + b;
-            }
-
+            Vector2 result = new Vector2();
+            result.x = a.x + b.x;
+            result.y = a.y + b.y;
             return result;
         }
-        public static Vector operator -(Vector a, float b)
+        public static Vector2 operator -(Vector2 a, Vector2 b)
         {
-            Vector result = new Vector(a.Length);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = (dynamic)a.Data[i] - b;
-            }
-
+            Vector2 result = new Vector2();
+            result.x = a.x - b.x;
+            result.y = a.y - b.y;
             return result;
         }
-        public static Vector operator *(Vector a, float b)
+        public static Vector2 operator *(Vector2 a, Vector2 b)
         {
-            Vector result = new Vector(a.Length);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = a.Data[i] * b;
-            }
-
+            Vector2 result = new Vector2();
+            result.x = a.x * b.x;
+            result.y = a.y * b.y;
             return result;
         }
-        public static Vector operator /(Vector a, float b)
+        public static Vector2 operator /(Vector2 a, Vector2 b)
         {
-            Vector result = new Vector(a.Length);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = a.Data[i] / b;
-            }
-
+            Vector2 result = new Vector2();
+            result.x = a.x / b.x;
+            result.y = a.y / b.y;
             return result;
-        }
-
-        public static Vector operator +(Vector a, Vector b)
-        {
-            Vector result = AllocateResult(a, b);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = a.Data[i] + b.Data[i];
-            }
-
-            return result;
-        }
-        public static Vector operator -(Vector a, Vector b)
-        {
-            Vector result = AllocateResult(a, b);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = a.Data[i] - b.Data[i];
-            }
-
-            return result;
-        }
-        public static Vector operator *(Vector a, Vector b)
-        {
-            Vector result = AllocateResult(a, b);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = a.Data[i] * b.Data[i];
-            }
-
-            return result;
-        }
-        public static Vector operator /(Vector a, Vector b)
-        {
-            Vector result = AllocateResult(a, b);
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result.Data[i] = a.Data[i] / b.Data[i];
-            }
-
-            return result;
-        }
-
-        static int MinLength(Vector a, Vector b)
-        {
-            return Math.Min(a.Length, b.Length);
-        }
-        static Vector AllocateResult(Vector a, Vector b)
-        {
-            int minSize = MinLength(a, b);
-            return new Vector(minSize);
         }
     }
 
@@ -331,14 +224,14 @@ namespace Softy
     {
         Device device;
 
-        public List<Vector> Vectors = new List<Vector>();
+        //public List<Vector> Vectors = new List<Vector>();
         public List<Matrix> Matrixes = new List<Matrix>();
         public List<Color> Colors = new List<Color>();
         public List<Texture> Textures = new List<Texture>();
 
         public PixelProgram Shader { get; set; }
-        public Vector Position { get; set; } = new Vector(0, 0);
-        public Vector Size { get; set; } = new Vector(1, 1);
+        public Vector2 Position { get; set; } = new Vector2(0, 0);
+        public Vector2 Size { get; set; } = new Vector2(1, 1);
 
         public int X
         {
@@ -366,7 +259,7 @@ namespace Softy
             this.device = device;
         }
 
-        public Color Sample(Vector screenUV, Vector objUV, Color workingPixel)
+        public Color Sample(Vector2 screenUV, Vector2 objUV, Color workingPixel)
         {
             if (Shader != null)
             {
