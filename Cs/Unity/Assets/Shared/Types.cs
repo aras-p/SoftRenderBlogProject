@@ -4,7 +4,7 @@ using static Softy.Shaders;
 
 namespace Softy
 {
-    public class Vector2
+    public struct Vector2
     {
         private float x, y;
 
@@ -34,14 +34,10 @@ namespace Softy
 
         public float Magnitude => (float)Math.Sqrt(MagnitudeSqrd);
 
-        public Vector2()
+        public Vector2(float x_, float y_)
         {
-        }
-
-        public Vector2(float x, float y)
-        {
-            X = x;
-            Y = y;
+            x = x_;
+            y = y_;
         }
 
 
@@ -230,8 +226,8 @@ namespace Softy
         public List<Texture> Textures = new List<Texture>();
 
         public PixelProgram Shader { get; set; }
-        public Vector2 Position { get; set; } = new Vector2(0, 0);
-        public Vector2 Size { get; set; } = new Vector2(1, 1);
+        public Vector2 Position = new Vector2(0, 0);
+        public Vector2 Size = new Vector2(1, 1);
 
         public int X
         {
