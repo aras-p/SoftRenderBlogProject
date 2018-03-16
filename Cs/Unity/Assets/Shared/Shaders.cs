@@ -69,8 +69,8 @@ namespace Softy
 
         public static Color SampleTexture(Texture texture, Vector2 objUV)
         {
-            int coordX = (int)Math.Round((texture.Width - 1) * objUV.x);
-            int coordY = (int)Math.Round((texture.Height - 1) * objUV.y);
+            int coordX = (int)((texture.Width - 1) * objUV.x);
+            int coordY = (int)((texture.Height - 1) * objUV.y);
             int height = coordY * texture.Stride;
             int width = coordX * 4;
 
