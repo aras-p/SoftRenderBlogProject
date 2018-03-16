@@ -71,6 +71,8 @@ public class SoftRenTest : MonoBehaviour
         {
             var s = (float)((double)m_Stopwatch.ElapsedTicks / (double)Stopwatch.Frequency) / m_UpdateCounter;
             m_UIPerfText.text = string.Format("ms: {0:F2}, FPS: {1:F1}", s * 1000.0f, 1.0f / s);
+            m_UpdateCounter = 0;
+            m_Stopwatch.Reset();
         }
         m_BackbufferTex.LoadRawTextureData(m_Device.BackBuffer);
         m_BackbufferTex.Apply();

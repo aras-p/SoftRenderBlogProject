@@ -44,7 +44,7 @@ namespace PerformanceTest
                 result.G = (byte)(result.G * dark);
                 result.R = (byte)(result.R * dark);
 
-                const int dither = 4;
+                const int dither = 32;
                 int ditherB = Math.Min(dither, Math.Min(result.B, 255 - result.B));
                 int ditherG = Math.Min(dither, Math.Min(result.G, 255 - result.G));
                 int ditherR = Math.Min(dither, Math.Min(result.R, 255 - result.R));
