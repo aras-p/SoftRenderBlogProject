@@ -188,29 +188,28 @@ namespace Softy
             int yOffset = startHeight * Stride;
             var checkerboard = Checkerboard;
             var backbuffer = BackBuffer;
-            for (int y = startHeight; y < endHeight; y++)
+            for (int y = startHeight; y < endHeight; y++, yOffset += Stride)
             {
+                if (checkerboard && ((y % 2) != renderOdd))
+                    continue;
                 int offset = yOffset + startWidth * 4;
                 for (int x = startWidth; x < endWidth; x++)
                 {
-                    if (checkerboard && ((x + y) & 1) == renderOdd || !checkerboard)
+                    Vector2 screenUV = new Vector2((float)x * invWidth, (float)y * invHeight);
+                    Vector2 objUV = (screenUV - obj.Position) * invObjSize;
+                    objUV = objUV.Clamp(0, 1);
+
+                    result = obj.Sample(screenUV, objUV);
+
+                    if (result.A > 0)
                     {
-                        Vector2 screenUV = new Vector2((float)x * invWidth, (float)y * invHeight);
-                        Vector2 objUV = (screenUV - obj.Position) * invObjSize;
-                        objUV = objUV.Clamp(0, 1);
-
-                        result = obj.Sample(screenUV, objUV);
-
-                        if (result.A > 0)
-                        {
-                            backbuffer[offset] = result.B;
-                            backbuffer[offset + 1] = result.G;
-                            backbuffer[offset + 2] = result.R;
-                        }
+                        backbuffer[offset] = result.B;
+                        backbuffer[offset + 1] = result.G;
+                        backbuffer[offset + 2] = result.R;
                     }
                     offset += 4;
                 }
-                yOffset += Stride;
+                
             }
         }
     }

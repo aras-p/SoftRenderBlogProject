@@ -70,20 +70,20 @@ static void DrawObject(int screenWidth, int screenHeight, int rowStartY, int row
     Vector2 objPosTimesInvSize = objPos * objInvSize;
     for (auto y = startY; y < endY; ++y)
     {
+        if (g_Checkerboard && ((y & 1) != g_RenderOdd))
+            continue;
+
         int yOffset = y * screenWidth;
         Vector2 screenUV = Vector2(startX * invWidth, y * invHeight);
         for (int x = startX; x < endX; ++x, screenUV.x += invWidth)
         {
-            if ((g_Checkerboard && (((x + y) & 1) == g_RenderOdd)) || !g_Checkerboard)
-            {
-                Vector2 objUV = screenUV * objInvSize - objPosTimesInvSize;
-                objUV = clamp(objUV, 0.f, 1.f);
+            Vector2 objUV = screenUV * objInvSize - objPosTimesInvSize;
+            objUV = clamp(objUV, 0.f, 1.f);
 
-                Color result = obj->shader(screenUV, objUV, obj);
-                if (result.a > 0)
-                {
-                    backbuffer[yOffset + x] = result;
-                }
+            Color result = obj->shader(screenUV, objUV, obj);
+            if (result.a > 0)
+            {
+                backbuffer[yOffset + x] = result;
             }
         }
     }
