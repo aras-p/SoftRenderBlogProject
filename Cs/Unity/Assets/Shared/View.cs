@@ -40,9 +40,9 @@ namespace PerformanceTest
                     {
                         result = Shaders.SampleTextureX(texture, texY, ouv);
 
-                        result.R = (byte)(result.R * dark);
-                        result.G = (byte)(result.G * dark);
-                        result.B = (byte)(result.B * dark);
+                        uint darkI = (uint)(dark * 255.0f);
+                        result.Scale(darkI);
+
                         result = Shaders.Dither(result, ditherOffset);
                     }
                     if (result.A > 0)

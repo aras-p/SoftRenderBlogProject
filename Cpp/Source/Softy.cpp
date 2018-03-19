@@ -226,9 +226,8 @@ static void PixelProgramView(
         {
             result = SampleTextureX(g_TextureView, textureY, objUV);
 
-            result.ch.b = (uint8_t)(result.ch.b * dark);
-            result.ch.g = (uint8_t)(result.ch.g * dark);
-            result.ch.r = (uint8_t)(result.ch.r * dark);
+            uint32_t darkI = (uint32_t)(dark * 255.0f);
+            result.Scale(darkI);
 
             result = Dither(result, (uint32_t)(size_t)backbuffer);
         }

@@ -147,6 +147,15 @@ namespace Softy
             A = 0;
             RGBA = rgba;
         }
+
+        public void Scale(uint scale) // 0..255
+        {
+            scale += 1;
+            uint u = RGBA;
+            uint lsb = (((u & 0x00ff00ff) * scale) >> 8) & 0x00ff00ff;
+            uint msb = (((u & 0xff00ff00) >> 8) * scale) & 0xff00ff00;
+            RGBA = lsb | msb | 0xff000000;
+        }
     }
 
     public class Texture

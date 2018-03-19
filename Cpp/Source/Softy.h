@@ -24,6 +24,15 @@ struct Color
     {
         rgba = rgba_;
     }
+
+    void Scale(uint32_t scale) // 0..255
+    {
+        scale += 1;
+        uint32_t u = rgba;
+        uint32_t lsb = (((u & 0x00ff00ff) * scale) >> 8) & 0x00ff00ff;
+        uint32_t msb = (((u & 0xff00ff00) >> 8) * scale) & 0xff00ff00;
+        rgba = lsb | msb | 0xff000000;
+    }
 };
 
 class Texture
