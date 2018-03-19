@@ -46,10 +46,10 @@ static Texture* LoadTexture(const char* path)
     Texture* tex = new Texture(width, height);
     for (int i = 0; i < width*height; ++i)
     {
-        tex->Data()[i].r = data[i * 4 + 2];
-        tex->Data()[i].g = data[i * 4 + 1];
-        tex->Data()[i].b = data[i * 4 + 0];
-        tex->Data()[i].a = data[i * 4 + 3];
+        tex->Data()[i].ch.r = data[i * 4 + 2];
+        tex->Data()[i].ch.g = data[i * 4 + 1];
+        tex->Data()[i].ch.b = data[i * 4 + 0];
+        tex->Data()[i].ch.a = data[i * 4 + 3];
     }
     stbi_image_free(data);
     return tex;

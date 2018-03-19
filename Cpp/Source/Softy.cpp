@@ -157,7 +157,7 @@ static void PixelProgramScope(
     {
         objUV.x = clamp(objUV.x, 0.f, 1.f);
         Color result = SampleTextureX(g_TextureScope, texY, objUV);
-        if (result.a > 0)
+        if (result.ch.a > 0)
             *backbuffer = result;
     }
 }
@@ -199,9 +199,9 @@ static Color Dither(Color col, uint32_t offset)
     uint32_t hash = IntHash(offset + g_TimeInt);
     uint32_t dither = 32;
     uint8_t v = (uint8_t)(hash & (dither - 1));
-    if (col.r < 255 - dither) col.r += v;
-    if (col.g < 255 - dither) col.g += v;
-    if (col.b < 255 - dither) col.b += v;
+    if (col.ch.r < 255 - dither) col.ch.r += v;
+    if (col.ch.g < 255 - dither) col.ch.g += v;
+    if (col.ch.b < 255 - dither) col.ch.b += v;
     return col;
 }
 
@@ -226,13 +226,13 @@ static void PixelProgramView(
         {
             result = SampleTextureX(g_TextureView, textureY, objUV);
 
-            result.b = (uint8_t)(result.b * dark);
-            result.g = (uint8_t)(result.g * dark);
-            result.r = (uint8_t)(result.r * dark);
+            result.ch.b = (uint8_t)(result.ch.b * dark);
+            result.ch.g = (uint8_t)(result.ch.g * dark);
+            result.ch.r = (uint8_t)(result.ch.r * dark);
 
             result = Dither(result, (uint32_t)(size_t)backbuffer);
         }
-        if (result.a > 0)
+        if (result.ch.a > 0)
         {
             *backbuffer = result;
         }

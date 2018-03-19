@@ -10,6 +10,7 @@ public class SoftRenTest : MonoBehaviour
     public UnityEngine.UI.RawImage m_UIImage;
     
     Texture2D m_BackbufferTex;
+    byte[] m_BackbufferBytes;
     Softy.Device m_Device;
     Softy.Texture m_ViewTex;
     Softy.Texture m_ScopeTex;
@@ -29,6 +30,7 @@ public class SoftRenTest : MonoBehaviour
             Checkerboard = checkerboard
         };
         m_BackbufferTex = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        m_BackbufferBytes = new byte[width * height * 4];
         m_UIImage.texture = m_BackbufferTex;
         m_ViewTex = LoadTexture(m_ViewSource);
         m_ScopeTex = LoadTexture(m_ScopeSource);
@@ -39,15 +41,12 @@ public class SoftRenTest : MonoBehaviour
     static Softy.Texture LoadTexture(Texture2D source)
     {
         Color32[] pixels = source.GetPixels32(0);
-        byte[] bytes = new byte[source.width * source.height * 4];
+        Softy.Color[] mypixels = new Softy.Color[source.width * source.height];
         for (var i = 0; i < pixels.Length; ++i)
         {
-            bytes[i * 4 + 0] = pixels[i].r;
-            bytes[i * 4 + 1] = pixels[i].g;
-            bytes[i * 4 + 2] = pixels[i].b;
-            bytes[i * 4 + 3] = pixels[i].a;
+            mypixels[i] = new Softy.Color(pixels[i].r, pixels[i].g, pixels[i].b, pixels[i].a);
         }
-        return new Softy.Texture(bytes, source.width * 4);
+        return new Softy.Texture(mypixels, source.width);
     }
 
     void UpdateLoop()
@@ -67,14 +66,23 @@ public class SoftRenTest : MonoBehaviour
     void Update ()
     {
         UpdateLoop();
-        if (m_UpdateCounter == 10)
+        if (m_UpdateCounter == 30)
         {
             var s = (float)((double)m_Stopwatch.ElapsedTicks / (double)Stopwatch.Frequency) / m_UpdateCounter;
             m_UIPerfText.text = string.Format("ms: {0:F2}, FPS: {1:F1}", s * 1000.0f, 1.0f / s);
             m_UpdateCounter = 0;
             m_Stopwatch.Reset();
         }
-        m_BackbufferTex.LoadRawTextureData(m_Device.BackBuffer);
+        for (int i = 0; i < m_Device.BackBuffer.Length; ++i)
+        {
+            var c = m_Device.BackBuffer[i];
+            m_BackbufferBytes[i * 4 + 0] = c.R;
+            m_BackbufferBytes[i * 4 + 1] = c.G;
+            m_BackbufferBytes[i * 4 + 2] = c.B;
+            m_BackbufferBytes[i * 4 + 3] = c.A;
+        }
+
+        m_BackbufferTex.LoadRawTextureData(m_BackbufferBytes);
         m_BackbufferTex.Apply();
     }
 }

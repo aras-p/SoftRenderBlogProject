@@ -42,10 +42,20 @@ namespace SoftRenCsCmdline
                     m_Stopwatch.Reset();
                 }
             }
+            var colBytes = new byte[m_Device.Width * m_Device.Height * 4];
+            for (int i = 0; i < m_Device.BackBuffer.Length; ++i)
+            {
+                var c = m_Device.BackBuffer[i];
+                colBytes[i * 4 + 0] = c.R;
+                colBytes[i * 4 + 1] = c.G;
+                colBytes[i * 4 + 2] = c.B;
+                colBytes[i * 4 + 3] = c.A;
+            }
+
             var image = new Image
             {
                 Comp = 4,
-                Data = m_Device.BackBuffer,
+                Data = colBytes,
                 Width = m_Device.Width,
                 Height = m_Device.Height
             };
@@ -75,7 +85,10 @@ namespace SoftRenCsCmdline
         {
             var bytes = File.ReadAllBytes(fileName);
             var image = StbImage.LoadFromMemory(bytes, StbImage.STBI_rgb_alpha);
-            return new Softy.Texture(image.Data, image.Width * 4);
+            var cols = new Softy.Color[image.Width * image.Height];
+            for (int i = 0; i < cols.Length; ++i)
+                cols[i] = new Softy.Color(image.Data[i * 4 + 0], image.Data[i * 4 + 1], image.Data[i * 4 + 2], image.Data[i * 4 + 3]);
+            return new Softy.Texture(cols, image.Width);
         }
 
         public static void ReadSettings(string filename, ref int width, ref int height, ref int threadCount, ref bool checkerboard)

@@ -4,9 +4,26 @@
 
 struct Color
 {
-    uint8_t r, g, b, a;
+    union
+    {
+        uint32_t rgba;
+        struct
+        {
+            uint8_t r, g, b, a;
+        } ch;
+    };
     Color() {}
-    Color(uint8_t rr, uint8_t gg, uint8_t bb, uint8_t aa) : r(rr), g(gg), b(bb), a(aa) {}
+    Color(uint8_t rr, uint8_t gg, uint8_t bb, uint8_t aa)
+    {
+        ch.r = rr;
+        ch.g = gg;
+        ch.b = bb;
+        ch.a = aa;
+    }
+    explicit Color(uint32_t rgba_)
+    {
+        rgba = rgba_;
+    }
 };
 
 class Texture

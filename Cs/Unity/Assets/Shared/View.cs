@@ -30,7 +30,7 @@ namespace PerformanceTest
                 float darkY2 = darkY * darkY;
                 float darkFac = 1.0f - 4.0f * darkY2;
                 uint ditherOffset = (uint)(backbufferOffset + (int)Shaders.Time);
-                for (int x = 0; x < cols; ++x, suv.x += screenUVdx, ouv.x += objUVdx, backbufferOffset += 4, ++ditherOffset)
+                for (int x = 0; x < cols; ++x, suv.x += screenUVdx, ouv.x += objUVdx, backbufferOffset++, ++ditherOffset)
                 {
                     Color result = new Color(0, 0, 0, 255);
 
@@ -40,16 +40,14 @@ namespace PerformanceTest
                     {
                         result = Shaders.SampleTextureX(texture, texY, ouv);
 
-                        result.B = (byte)(result.B * dark);
-                        result.G = (byte)(result.G * dark);
                         result.R = (byte)(result.R * dark);
+                        result.G = (byte)(result.G * dark);
+                        result.B = (byte)(result.B * dark);
                         result = Shaders.Dither(result, ditherOffset);
                     }
                     if (result.A > 0)
                     {
-                        backbuffer[backbufferOffset] = result.B;
-                        backbuffer[backbufferOffset+1] = result.G;
-                        backbuffer[backbufferOffset+2] = result.R;
+                        backbuffer[backbufferOffset] = result;
                     }
                 }
             });

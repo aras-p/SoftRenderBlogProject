@@ -32,10 +32,9 @@ namespace Softy
 
         public int Width { get; }
         public int Height { get; }
-        public int Stride { get; }
         public int PixelCount { get; }
 
-        public byte[] BackBuffer { get; }
+        public Color[] BackBuffer { get; }
         Queue<RenderObject> renderQueue = new Queue<RenderObject>();
 
         private Task[] _tasks;
@@ -64,31 +63,11 @@ namespace Softy
 
             Width = width;
             Height = height;
-            Stride = 4 * Width;
             PixelCount = Width * Height;
 
-            BackBuffer = new byte[Stride * height];
-            for (int i = 0; i < Stride * height; ++i)
-                BackBuffer[i] = 255;
-        }
-
-        public void Clear(byte b = 0, byte g = 0, byte r = 0)
-        {
-            lock (threadLock)
-            {
-                int pixelsForThread = PixelCount / ThreadCount;
-
-                for (int i = 0; i < ThreadCount; i++)
-                {
-                    int index = i;
-                    _tasks[i] = Task.Factory.StartNew(() => ClearThread(index, pixelsForThread, new Color(b, g, r)));
-                }
-
-                for (int i = 0; i < ThreadCount; i++)
-                {
-                    _tasks[i].Wait();
-                }
-            }
+            BackBuffer = new Color[width * height];
+            for (int i = 0; i < width * height; ++i)
+                BackBuffer[i] = new Color(0x80808080);
         }
 
         public void Draw(RenderObject texture)
@@ -155,22 +134,6 @@ namespace Softy
             renderOdd = 1 - renderOdd;
         }
 
-        void ClearThread(int index, int pixelCount, Color color)
-        {
-            int startPixel = pixelCount * index;
-            int endPixel = index + 1 >= ThreadCount ? BackBuffer.Length / 4 : pixelCount * (index + 1);
-
-            int startOffset = startPixel * 4;
-            int endOffset = endPixel * 4;
-            for (int i = startOffset; i < endOffset; i += 4)
-            {
-                BackBuffer[i] = color.B;
-                BackBuffer[i + 1] = color.G;
-                BackBuffer[i + 2] = color.R;
-                BackBuffer[i + 3] = 255;
-            }
-        }
-
         int renderOdd = 0;
         void RenderThread(int index, int strideCount, RenderObject obj)
         {
@@ -186,14 +149,14 @@ namespace Softy
             float invHeight = 1f / Height;
             Vector2 objPos = obj.Position;
             Vector2 invObjSize = new Vector2(1, 1) / obj.Size;
-            int yOffset = startHeight * Stride;
+            int yOffset = startHeight * Width;
             var checkerboard = Checkerboard;
             var backbuffer = BackBuffer;
-            for (int y = startHeight; y < endHeight; y++, yOffset += Stride)
+            for (int y = startHeight; y < endHeight; y++, yOffset += Width)
             {
                 if (checkerboard && ((y % 2) != renderOdd))
                     continue;
-                int offset = yOffset + startWidth * 4;
+                int offset = yOffset + startWidth;
                 Vector2 screenUV = new Vector2((float)startWidth * invWidth, (float)y * invHeight);
                 Vector2 objUV = (screenUV - objPos) * invObjSize;
                 objUV.y = Shaders.Clamp(objUV.y, 0f, 1f);

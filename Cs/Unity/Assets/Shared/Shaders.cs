@@ -10,7 +10,7 @@ namespace Softy
             timer.Start();
         }
 
-        public delegate void PixelProgram(Vector2 screenUV, Vector2 objUV, int cols, float screenUVdx, float objUVdx, byte[] backbuffer, int backbufferIndex);
+        public delegate void PixelProgram(Vector2 screenUV, Vector2 objUV, int cols, float screenUVdx, float objUVdx, Color[] backbuffer, int backbufferOffset);
 
         static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
@@ -64,20 +64,13 @@ namespace Softy
         public static int SampleTextureY(Texture texture, Vector2 objUV)
         {
             int coordY = (int)((texture.Height - 1) * objUV.y);
-            return coordY * texture.Stride;
+            return coordY * texture.Width;
         }
 
         public static Color SampleTextureX(Texture texture, int rowOffset, Vector2 objUV)
         {
             int coordX = (int)((texture.Width - 1) * objUV.x);
-            int width = coordX * 4;
-            int offs = rowOffset + width;
-            var data = texture.Data;
-            return new Color(
-                data[offs],
-                data[offs + 1],
-                data[offs + 2],
-                data[offs + 3]);
+            return texture.Data[rowOffset + coordX];
         }
     }
 }

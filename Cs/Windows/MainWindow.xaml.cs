@@ -13,6 +13,7 @@ namespace SoftRenTest
     public partial class MainWindow : Window
     {
         WriteableBitmap FrontBuffer;
+        byte[] FrontBytes;
         Stopwatch stopwatch = new Stopwatch();
         int counter;
         Device device;
@@ -34,6 +35,7 @@ namespace SoftRenTest
             device = new Device(width, height, threadCount);
             device.Checkerboard = checkerboard;
             FrontBuffer = new WriteableBitmap(device.Width, device.Height, 96, 96, PixelFormats.Bgra32, null);
+            FrontBytes = new byte[device.Width * device.Height * 4];
             Viewport.Source = FrontBuffer;
 
             view = new View(device, LoadTexture("Unity/Assets/Data/View.png"));
@@ -44,7 +46,6 @@ namespace SoftRenTest
                 IsBackground = true
             };
             mainLoop.Start();
-            device.Clear(127);
         }
 
         void MainLoop()
@@ -68,7 +69,7 @@ namespace SoftRenTest
         public void UpdateMainWindow()
         {
             var s = 0.0f;
-            if (counter == 50)
+            if (counter == 80)
             {
                 s = (float)((double)stopwatch.ElapsedTicks / (double)Stopwatch.Frequency) / counter;
                 stopwatch.Reset();
@@ -79,11 +80,19 @@ namespace SoftRenTest
                 if (s != 0)
                     FPS.Content = string.Format("ms: {0:F2}, FPS: {1:F1}", s * 1000.0f, 1.0f / s);
 
+                for (int i = 0; i < device.BackBuffer.Length; ++i)
+                {
+                    var c = device.BackBuffer[i];
+                    FrontBytes[i * 4 + 0] = c.B;
+                    FrontBytes[i * 4 + 1] = c.G;
+                    FrontBytes[i * 4 + 2] = c.R;
+                    FrontBytes[i * 4 + 3] = c.A;
+                }
                 FrontBuffer.Lock();
                 FrontBuffer.WritePixels(
                     new Int32Rect(0, 0, device.Width, device.Height),
-                    device.BackBuffer,
-                    device.Stride, 0);
+                    FrontBytes,
+                    device.Width*4, 0);
                 FrontBuffer.Unlock();
             });
         }
@@ -96,10 +105,12 @@ namespace SoftRenTest
             newBitmapSource.Source = bitmapSource;
             newBitmapSource.DestinationFormat = PixelFormats.Bgra32;
             newBitmapSource.EndInit();
-            int stride = (newBitmapSource.PixelWidth * newBitmapSource.Format.BitsPerPixel / 8);
-            byte[] rawImage = new byte[(stride * newBitmapSource.PixelHeight)];
-            newBitmapSource.CopyPixels(rawImage, stride, 0);
-            Texture texture = new Texture(rawImage, stride);
+            byte[] rawBytes = new byte[newBitmapSource.PixelWidth * newBitmapSource.PixelHeight * 4];
+            newBitmapSource.CopyPixels(rawBytes, newBitmapSource.PixelWidth*4, 0);
+            Softy.Color[] rawImage = new Softy.Color[newBitmapSource.PixelWidth * newBitmapSource.PixelHeight];
+            for (int i = 0; i < newBitmapSource.PixelWidth * newBitmapSource.PixelHeight; ++i)
+                rawImage[i] = new Softy.Color(rawBytes[i * 4 + 2], rawBytes[i * 4 + 1], rawBytes[i * 4 + 0], rawBytes[i * 4 + 3]);
+            Texture texture = new Texture(rawImage, newBitmapSource.PixelWidth);
             return texture;
         }
 

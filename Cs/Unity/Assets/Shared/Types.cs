@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using static Softy.Shaders;
 
 namespace Softy
@@ -121,40 +122,44 @@ namespace Softy
         }
     }
 
+    [StructLayout(LayoutKind.Explicit)]
     public struct Color
     {
-        public byte B;
-        public byte G;
-        public byte R;
-        public byte A;
+        [FieldOffset(0)] public byte R;
+        [FieldOffset(1)] public byte G;
+        [FieldOffset(2)] public byte B;
+        [FieldOffset(3)] public byte A;
+        [FieldOffset(0)] public uint RGBA;
 
         public Color(byte r = 0, byte g = 0, byte b = 0, byte a = 255)
         {
-            B = r;
+            RGBA = 0;
+            R = r;
             G = g;
-            R = b;
+            B = b;
             A = a;
         }
-
-        public static Color DefaultColor = new Color(255, 0, 255, 255);
+        public Color(uint rgba)
+        {
+            B = 0;
+            G = 0;
+            R = 0;
+            A = 0;
+            RGBA = rgba;
+        }
     }
 
     public class Texture
     {
         public int Height;
-        public int Stride;
         public int Width;
+        public Color[] Data;
 
-        public int PixelCount => Width * Height;
-
-        public byte[] Data;
-
-        public Texture(byte[] data, int stride)
+        public Texture(Color[] data, int width)
         {
             Data = data;
-            Stride = stride;
-            Width = stride / 4;
-            Height = Data.Length / Stride;
+            Width = width;
+            Height = Data.Length / width;
         }
     }
 
