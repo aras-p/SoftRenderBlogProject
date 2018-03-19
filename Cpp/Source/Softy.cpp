@@ -194,12 +194,10 @@ static uint32_t IntHash(uint32_t a)
 
 static Color Dither(Color col, uint32_t offset)
 {
-    uint32_t hash = IntHash(offset + g_TimeInt);
-    uint32_t dither = 32;
-    uint8_t v = (uint8_t)(hash & (dither - 1));
-    if (col.ch.r < 255 - dither) col.ch.r += v;
-    if (col.ch.g < 255 - dither) col.ch.g += v;
-    if (col.ch.b < 255 - dither) col.ch.b += v;
+    uint32_t hash = IntHash(offset + g_TimeInt) & 31U;
+    col.ch.r = (uint8_t)std::min(col.ch.r + hash, 255U);
+    col.ch.g = (uint8_t)std::min(col.ch.g + hash, 255U);
+    col.ch.b = (uint8_t)std::min(col.ch.b + hash, 255U);
     return col;
 }
 

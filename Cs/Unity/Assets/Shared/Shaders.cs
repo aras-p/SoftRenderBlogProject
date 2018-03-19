@@ -38,12 +38,13 @@ namespace Softy
 
         public static Color Dither(Color col, uint offset)
         {
-            uint dither = 32;
-            uint hash = IntHash(offset);
-            byte v = (byte)(hash & (dither - 1));
-            if (col.R < 255 - dither) col.R += v;
-            if (col.G < 255 - dither) col.G += v;
-            if (col.B < 255 - dither) col.B += v;
+            uint hash = IntHash(offset) & 31U;
+            uint r = Math.Min(col.R + hash, 255);
+            uint g = Math.Min(col.G + hash, 255);
+            uint b = Math.Min(col.B + hash, 255);
+            col.R = (byte)r;
+            col.G = (byte)g;
+            col.B = (byte)b;
             return col;
         }
 
