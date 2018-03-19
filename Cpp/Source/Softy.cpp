@@ -211,7 +211,8 @@ static void PixelProgramView(
 {
     const Color* textureY = SampleTextureY(g_TextureView, objUV);
     float darkXfac = -0.5f + g_CosTime1000 * 0.1f;
-    float darkY = fabs(screenUV.y - 0.5f + g_CosTime600 * 0.1f);
+    screenUV.x += darkXfac;
+    float darkY = screenUV.y - 0.5f + g_CosTime600 * 0.1f;
     float darkY2 = darkY * darkY;
     float darkFac = 1.0f - 4.0f * darkY2;
 
@@ -220,7 +221,7 @@ static void PixelProgramView(
         objUV.x = clamp(objUV.x, 0.f, 1.f);
         Color result = Color(0, 0, 0, 255);
 
-        float darkX = fabs(screenUV.x + darkXfac );
+        float darkX = screenUV.x;
         float dark = darkFac - 4.f * darkX * darkX;
         if (dark > 0.0f)
         {
@@ -231,10 +232,7 @@ static void PixelProgramView(
 
             result = Dither(result, (uint32_t)(size_t)backbuffer);
         }
-        if (result.ch.a > 0)
-        {
-            *backbuffer = result;
-        }
+        *backbuffer = result;
     }
 }
 
