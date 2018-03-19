@@ -73,8 +73,8 @@ namespace SoftRenCsCmdline
             m_View.Update();
             m_Scope.Update();
 
-            m_View.Draw();
-            m_Scope.Draw();
+            m_Device.Draw(m_View.obj);
+            m_Device.Draw(m_Scope.obj);
 
             m_Device.Render();
             m_Stopwatch.Stop();

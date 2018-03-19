@@ -160,7 +160,7 @@ namespace Softy
                 Vector2 screenUV = new Vector2((float)startWidth * invWidth, (float)y * invHeight);
                 Vector2 objUV = (screenUV - objPos) * invObjSize;
                 objUV.y = Shaders.Clamp(objUV.y, 0f, 1f);
-                obj.Shader(screenUV, objUV, endWidth - startWidth, invWidth, invWidth*invObjSize.x, backbuffer, offset);
+                obj.Shader.ExecuteRow(screenUV, objUV, endWidth - startWidth, invWidth, invWidth*invObjSize.x, backbuffer, offset, ref obj.texture, ref Shaders.globals);
             }
         }
     }

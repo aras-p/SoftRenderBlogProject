@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static Softy.Shaders;
 
@@ -158,7 +157,7 @@ namespace Softy
         }
     }
 
-    public class Texture
+    public struct Texture
     {
         public int Height;
         public int Width;
@@ -170,13 +169,16 @@ namespace Softy
             Width = width;
             Height = Data.Length / width;
         }
+        public void Dispose()
+        {
+        }
     }
 
     public class RenderObject
     {
-        Device device;
-
-        public PixelProgram Shader;
+        public Device device;
+        public IPixelShader Shader;
+        public Texture texture;
         public Vector2 Position = new Vector2(0, 0);
         public Vector2 Size = new Vector2(1, 1);
 
@@ -201,14 +203,10 @@ namespace Softy
             set => Size.y = (float)value / device.Height;
         }
 
-        public RenderObject(Device device)
+        public RenderObject(Device device, Texture texture)
         {
             this.device = device;
-        }
-
-        public void Draw()
-        {
-            device.Draw(this);
+            this.texture = texture;
         }
     }
 }

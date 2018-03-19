@@ -3,6 +3,22 @@ using System.Diagnostics;
 
 namespace Softy
 {
+    public struct ShaderGlobals
+    {
+        public float Time;
+        public float CosTime1000;
+        public float CosTime600;
+    }
+
+    public interface IPixelShader
+    {
+        void ExecuteRow(
+            Vector2 screenUV, Vector2 objUV,
+            int cols, float screenUVdx, float objUVdx,
+            Color[] backbuffer, int backbufferOffset,
+            ref Texture texture, ref ShaderGlobals globals);
+    }
+
     public static class Shaders
     {
         static Shaders()
@@ -12,11 +28,8 @@ namespace Softy
 
         public delegate void PixelProgram(Vector2 screenUV, Vector2 objUV, int cols, float screenUVdx, float objUVdx, Color[] backbuffer, int backbufferOffset);
 
-        static Random random = new Random();
         public static Stopwatch timer = new Stopwatch();
-        public static float Time = 0;
-        public static float CosTime1000;
-        public static float CosTime600;
+        public static ShaderGlobals globals = new ShaderGlobals();
 
         public static float Clamp(float value, float min, float max)
         {
@@ -55,9 +68,9 @@ namespace Softy
 
         public static void TimeUpdate()
         {
-            Time = (float)timer.ElapsedMilliseconds;
-            CosTime1000 = (float)Math.Cos(Time / 1000.0f);
-            CosTime600 = (float)Math.Cos(Time / 600.0f);
+            globals.Time = (float)timer.ElapsedMilliseconds;
+            globals.CosTime1000 = (float)Math.Cos(globals.Time / 1000.0f);
+            globals.CosTime600 = (float)Math.Cos(globals.Time / 600.0f);
         }
 
         public static int SampleTextureY(Texture texture, Vector2 objUV)

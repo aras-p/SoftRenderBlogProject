@@ -56,8 +56,8 @@ namespace SoftRenTest
                 view.Update();
                 scope.Update();
 
-                view.Draw();
-                scope.Draw();
+                device.Draw(view.obj);
+                device.Draw(scope.obj);
 
                 device.Render();
                 stopwatch.Stop();
